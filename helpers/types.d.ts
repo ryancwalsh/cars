@@ -6,6 +6,10 @@ export interface JsonObject {
   [key: string]: JsonValue;
 }
 
+type Primitive = string | number | boolean | null;
+
+export type FlatJson = Record<string, Primitive>;
+
 export type Model = {
   back_seat_folds_flat?: boolean | null;
   concern?: string | null;
@@ -20,3 +24,10 @@ export type Model = {
   trim: string;
   year: number;
 };
+
+export type ScrapedListing = {
+  make: string;
+  model: string;
+  trim: string;
+  year: number;
+} & Database['public']['Tables']['listings']['Row'];

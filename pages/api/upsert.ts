@@ -6,14 +6,13 @@ import { HttpStatusCode } from 'axios';
 import { type NextApiRequest, type NextApiResponse } from 'next';
 
 import { upsertAndGetIds } from '../../helpers/supabase';
-import { type Model } from '../../helpers/types';
 
 export default async function handler(request: NextApiRequest, response: NextApiResponse) {
   const modelsAsJsonString = request.query.models as string;
   const models = JSON.parse(modelsAsJsonString);
   console.log({ models, modelsAsJsonString });
 
-  const result = await upsertAndGetIds<Model>('models', models, ['year', 'make', 'model', 'trim']);
+  const result = await upsertAndGetIds<'models'>('models', models, ['year', 'make', 'model', 'trim']);
 
   response.status(result.data ? HttpStatusCode.Ok : HttpStatusCode.BadRequest).json(result);
 }
