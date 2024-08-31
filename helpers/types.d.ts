@@ -1,3 +1,8 @@
+export type JsonValue = string | number | boolean | null | JsonObject | JsonValue[];
+export interface JsonObject {
+  [key: string]: JsonValue;
+}
+
 export type Model = {
   back_seat_folds_flat?: boolean | null;
   concern?: string | null;
