@@ -12,7 +12,13 @@ import { type ScrapedListing } from '../../helpers/types';
 
 function getModelsFromListings(listings: ScrapedListing[]) {
   return listings.map((listing) => {
-    const modelToInsert: Database['public']['Tables']['models']['Insert'] = { make: listing.make, model: listing.model, trim: listing.trim, year: listing.year };
+    const modelToInsert: Database['public']['Tables']['models']['Insert'] = {
+      lowercase_hash: `${listing.year}_${listing.make}_${listing.model}_${listing.trim}`.toLowerCase(),
+      make: listing.make,
+      model: listing.model,
+      trim: listing.trim,
+      year: listing.year,
+    };
     return modelToInsert;
   });
 }
@@ -26,8 +32,8 @@ export default async function handler(request: NextApiRequest, response: NextApi
 
   const models = getModelsFromListings(listings);
 
-  // const result = await upsertAndGetIds<'models'>('models', models, ['year', 'make', 'model', 'trim']);
-  const result = await upsertModels(models, ['year', 'make', 'model', 'trim']);
+  const result = await upsertModels(models, ['lowercase_hash']);
+  // FIXNOW: upsert Listings now that you have the model IDs.
 
   response.status(result.data ? HttpStatusCode.Ok : HttpStatusCode.BadRequest).json(result);
 }
