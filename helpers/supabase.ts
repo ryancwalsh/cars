@@ -1,5 +1,5 @@
 // TODO: Figure out how to avoid "as" and "unknown" while in TS types.
-import { createClient } from '@supabase/supabase-js';
+import { createClient, type QueryData } from '@supabase/supabase-js';
 
 import { type Database } from '../database.types';
 import { SUPABASE_ANON_KEY, SUPABASE_URL } from './config';
@@ -29,8 +29,10 @@ export async function upsertAndGetIds<TableName extends keyof Database['public']
     query = query.or(uniqueColumns.map((column) => `${column}.eq.${filter[column]}`).join(','));
   }
 
+  type Rows = QueryData<typeof query>; // https://supabase.com/docs/reference/javascript/select#response-types-for-complex-queries
+
   const queryResult = await query;
-  const existingRecords = queryResult.data; // TODO: : RowT[] | null
+  const existingRecords: Rows | null = queryResult.data;
   const selectError = queryResult.error;
   console.log({ existingRecords, query, selectError });
 
