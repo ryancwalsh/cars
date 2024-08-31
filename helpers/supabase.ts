@@ -64,10 +64,9 @@ export async function upsertAndGetIds<RowT>(tableName: string, records: RowT[], 
     }
   }
 
-  console.log({ insertedRecords });
-
   // Step 5: Combine the IDs of existing and inserted records
   const allRecords = [...existingRecords, ...insertedRecords];
+  console.log({ existingRecords, insertedRecords });
 
   // Step 6: Return the combined results with IDs
   return { data: allRecords, error: null };
