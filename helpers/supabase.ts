@@ -1,13 +1,16 @@
 // TODO: Figure out how to avoid "as" and "unknown" while in TS types.
 import { createClient } from '@supabase/supabase-js';
 
+import { type Database } from '../database.types';
 import { SUPABASE_ANON_KEY, SUPABASE_URL } from './config';
 import { type JsonObject } from './types';
 
-const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const supabaseClient = createClient<Database>(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+type TableRows<TableName extends keyof Database['public']['Tables']> = Array<Database['public']['Tables'][TableName]['Row']>;
 
 // eslint-disable-next-line max-lines-per-function
-export async function upsertAndGetIds<RowT extends JsonObject>(tableName: string, records: RowT[], uniqueColumns: string[]) {
+export async function upsertAndGetIds<TableName extends keyof Database['public']['Tables']>(tableName: TableName, records: TableRows<TableName>, uniqueColumns: string[]) {
   // Step 1: Build a dynamic filter for fetching existing records
   const filters = records.map((record) => {
     const filterObject: JsonObject = {};
@@ -37,6 +40,7 @@ export async function upsertAndGetIds<RowT extends JsonObject>(tableName: string
   }
 
   // Step 3: Determine which records need to be inserted
+  // TODO: `record[column]` has an error: `Element implicitly has an 'any' type because index expression is not of type 'number'.ts(7015)`
   const existingValues = new Set(existingRecords?.map((record) => uniqueColumns.map((column) => record[column]).join('|')));
   console.log({ existingValues });
 
@@ -47,10 +51,10 @@ export async function upsertAndGetIds<RowT extends JsonObject>(tableName: string
   console.log({ recordsToInsert });
 
   // Step 4: Insert non-existing records and get their IDs
-  let insertedRecords: RowT[] = [];
+  let insertedRecords: TableRows<TableName> = [];
   if (recordsToInsert.length > 0) {
     const { data: insertedData, error: insertError } = await supabaseClient
-      .from(tableName)
+      .from<TableName, Database['public']['Tables'][TableName]>(tableName)
       .insert(recordsToInsert)
       .select(`id, ${uniqueColumns.join(', ')}`);
 
@@ -60,6 +64,7 @@ export async function upsertAndGetIds<RowT extends JsonObject>(tableName: string
     }
 
     if (insertedData) {
+      // TODO: fix error `'RowT' could be instantiated with an arbitrary type which could be unrelated to 'ParserError<`Expected identifier at \`${GenericStringError}\``>'.ts(2322)`
       insertedRecords = insertedData;
     }
   }
@@ -67,6 +72,7 @@ export async function upsertAndGetIds<RowT extends JsonObject>(tableName: string
   // Step 5: Combine the IDs of existing and inserted records
   const allRecords = [...insertedRecords];
   if (existingRecords) {
+    // TODO: fix error `'RowT' could be instantiated with an arbitrary type which could be unrelated to 'ParserError<`Expected identifier at \`${GenericStringError}\``>'.ts(2345)`
     allRecords.push(...existingRecords);
   }
 
