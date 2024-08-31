@@ -1,14 +1,8 @@
-// import * as supabase from "../../libraries/supabase-js@2.js";
 import { createClient } from '@supabase/supabase-js';
 
 import { SUPABASE_ANON_KEY, SUPABASE_URL } from './config';
 
-// console.log({ SUPABASE_URL, SUPABASE_ANON_KEY });
-
-// const { createClient } = supabase;
-
 const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-// console.log({ supabaseClient });
 
 // eslint-disable-next-line max-lines-per-function
 export async function upsertAndGetIds<RowT>(tableName: string, records: RowT[], uniqueColumns: string[]) {
