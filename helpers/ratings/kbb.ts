@@ -54,7 +54,7 @@ export async function getKbbRatings(searchQuery: string, modelId: number) {
       };
       console.log({ consumerRatingString, expertRatingString, payload });
 
-      const result = await upsertRatings([payload], Object.keys(payload));
+      const result = await upsertRatings([payload]);
 
       return result;
     } else {

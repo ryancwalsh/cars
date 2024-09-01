@@ -42,7 +42,7 @@ export async function getCarsDotComRatings(searchQuery: string, modelId: number)
       };
       const payload = { model_id: modelId, ...ratings };
       console.log({ payload, ratings, ratingString, text, textContent });
-      const result = await upsertRatings([], Object.keys(payload));
+      const result = await upsertRatings([]);
 
       return result;
     } else {

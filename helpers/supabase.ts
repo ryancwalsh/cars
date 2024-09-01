@@ -62,14 +62,14 @@ export async function upsertListings(records: TableRows<'listings'>) {
 /**
  * https://supabase.com/docs/reference/javascript/upsert
  */
-export async function upsertRatings(records: TableRows<'ratings'>, uniqueColumns: string[]) {
+export async function upsertRatings(records: TableRows<'ratings'>) {
   const modelIdKey = 'model_id';
-  // FIXNOW
-  const onConflict = uniqueColumns.filter((column) => column !== modelIdKey).join(',');
+
+  const onConflict = modelIdKey;
   console.log({ onConflict });
 
   const { data: upsertData, error: upsertError } = await supabaseClient.from<'ratings', Database['public']['Tables']['ratings']>('ratings').upsert(records, {
-    ignoreDuplicates: true, // If true, duplicate rows are ignored. If false, duplicate rows are merged with existing rows.
+    ignoreDuplicates: false, // If true, duplicate rows are ignored. If false, duplicate rows are merged with existing rows.
     onConflict, // Comma-separated UNIQUE column(s) to specify how duplicate rows are determined. Two rows are duplicates if all the onConflict columns are equal.
   });
 
