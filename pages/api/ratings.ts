@@ -6,7 +6,6 @@ import { type NextApiRequest, type NextApiResponse } from 'next';
 
 import { getCarsDotComRatings } from '../../helpers/ratings/cars_dot_com';
 import { getKbbRatings } from '../../helpers/ratings/kbb';
-import { type FlatJson } from '../../helpers/types';
 
 export default async function handler(request: NextApiRequest, response: NextApiResponse) {
   const searchQuery = request.query.searchQuery as string;
