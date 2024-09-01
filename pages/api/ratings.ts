@@ -7,8 +7,8 @@
 
 import { type NextApiRequest, type NextApiResponse } from 'next';
 
-import { getCarsDotComRatings } from '../../helpers/ratings/cars_dot_com';
-import { getKbbRatings } from '../../helpers/ratings/kbb';
+import { getCarsDotComRatings } from '../../helpers/scrapers/carsDotCom';
+import { getKbbRatings } from '../../helpers/scrapers/kbb';
 import { type upsertRatings } from '../../helpers/supabase';
 
 export default async function handler(request: NextApiRequest, response: NextApiResponse) {
