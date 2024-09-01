@@ -5,7 +5,7 @@ import { SUPABASE_ANON_KEY, SUPABASE_URL } from './config';
 import { getUniqueObjects } from './generic/arrays';
 import { type TableRows } from './types';
 
-const supabaseClient = createClient<Database>(SUPABASE_URL, SUPABASE_ANON_KEY);
+export const supabaseClient = createClient<Database>(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 /**
  * https://supabase.com/docs/reference/javascript/upsert

@@ -48,6 +48,13 @@ export type Database = {
             foreignKeyName: 'listings_model_id_fkey';
             isOneToOne: false;
             referencedColumns: ['id'];
+            referencedRelation: 'missing_ratings';
+          },
+          {
+            columns: ['model_id'];
+            foreignKeyName: 'listings_model_id_fkey';
+            isOneToOne: false;
+            referencedColumns: ['id'];
             referencedRelation: 'models';
           },
         ];
@@ -160,6 +167,13 @@ export type Database = {
             foreignKeyName: 'ratings_model_id_fkey';
             isOneToOne: true;
             referencedColumns: ['id'];
+            referencedRelation: 'missing_ratings';
+          },
+          {
+            columns: ['model_id'];
+            foreignKeyName: 'ratings_model_id_fkey';
+            isOneToOne: true;
+            referencedColumns: ['id'];
             referencedRelation: 'models';
           },
         ];
@@ -186,7 +200,21 @@ export type Database = {
       };
     };
     Views: {
-      [_ in never]: never;
+      missing_ratings: {
+        Relationships: [];
+        Row: {
+          cars_dot_com_rating: number | null;
+          cars_dot_com_ratings_count: number | null;
+          id: number | null;
+          kbb_consumer_rating: number | null;
+          kbb_consumer_ratings_count: number | null;
+          kbb_expert_rating: number | null;
+          make: string | null;
+          model: string | null;
+          trim: string | null;
+          year: number | null;
+        };
+      };
     };
   };
 };
