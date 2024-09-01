@@ -5,6 +5,7 @@
  */
 
 import { getChromium } from '../generic/chromium';
+import { getNumberWithinString } from '../generic/numbers';
 import { upsertRatings } from '../supabase';
 
 // eslint-disable-next-line max-lines-per-function
@@ -37,10 +38,11 @@ export async function getCarsDotComRatings(searchQuery: string, modelId: number)
 
       const ratings = {
         cars_dot_com_rating: Number(ratingString),
-        cars_dot_com_ratings_count: Number(text?.replaceAll(/\D/gu, '')),
+        cars_dot_com_ratings_count: getNumberWithinString(text),
       };
-      console.log({ ratings, ratingString, text, textContent });
-      const result = await upsertRatings([{ model_id: modelId, ...ratings }]);
+      const payload = { model_id: modelId, ...ratings };
+      console.log({ payload, ratings, ratingString, text, textContent });
+      const result = await upsertRatings([], Object.keys(payload));
 
       return result;
     } else {

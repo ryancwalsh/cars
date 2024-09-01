@@ -149,6 +149,9 @@ export type Database = {
           cars_dot_com_ratings_count?: number | null;
           created_at?: string;
           id?: number;
+          kbb_consumer_rating?: number | null;
+          kbb_consumer_ratings_count?: number | null;
+          kbb_expert_rating?: number | null;
           model_id: number;
         };
         Relationships: [
@@ -165,6 +168,9 @@ export type Database = {
           cars_dot_com_ratings_count: number | null;
           created_at: string;
           id: number;
+          kbb_consumer_rating: number | null;
+          kbb_consumer_ratings_count: number | null;
+          kbb_expert_rating: number | null;
           model_id: number;
         };
         Update: {
@@ -172,6 +178,9 @@ export type Database = {
           cars_dot_com_ratings_count?: number | null;
           created_at?: string;
           id?: number;
+          kbb_consumer_rating?: number | null;
+          kbb_consumer_ratings_count?: number | null;
+          kbb_expert_rating?: number | null;
           model_id?: number;
         };
       };
