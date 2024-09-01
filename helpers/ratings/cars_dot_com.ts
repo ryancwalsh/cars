@@ -5,9 +5,10 @@
  */
 
 import { getChromium } from '../generic/chromium';
+import { upsertRatings } from '../supabase';
 
 // eslint-disable-next-line max-lines-per-function
-export async function getCarsDotComRatings(searchQuery: string) {
+export async function getCarsDotComRatings(searchQuery: string, modelId: number) {
   // https://superuser.com/questions/1496083/google-feeling-lucky-url-causing-redirect-notice/1496084#comment2934824_1496084
   // https://duckduckgo.com/bangs
   const url = `https://duckduckgo.com/?q=%5C${encodeURIComponent(`${searchQuery} ratings reviews site:cars.com !ducky`)}`;
@@ -33,12 +34,13 @@ export async function getCarsDotComRatings(searchQuery: string) {
 
       const textContent = await childElement?.getProperty('textContent');
       const text = await textContent?.jsonValue();
-      // FIXNOW: Save to DB for this model
-      const result = {
+
+      const ratings = {
         cars_dot_com_rating: Number(ratingString),
         cars_dot_com_ratings_count: Number(text?.replaceAll(/\D/gu, '')),
       };
-      console.log({ ratingString, result, text, textContent });
+      console.log({ ratings, ratingString, text, textContent });
+      const result = await upsertRatings([{ model_id: modelId, ...ratings }]);
 
       return result;
     } else {

@@ -143,6 +143,38 @@ export type Database = {
           year?: number;
         };
       };
+      ratings: {
+        Insert: {
+          cars_dot_com_rating?: number | null;
+          cars_dot_com_ratings_count?: number | null;
+          created_at?: string;
+          id?: number;
+          model_id: number;
+        };
+        Relationships: [
+          {
+            columns: ['model_id'];
+            foreignKeyName: 'ratings_model_id_fkey';
+            isOneToOne: true;
+            referencedColumns: ['id'];
+            referencedRelation: 'models';
+          },
+        ];
+        Row: {
+          cars_dot_com_rating: number | null;
+          cars_dot_com_ratings_count: number | null;
+          created_at: string;
+          id: number;
+          model_id: number;
+        };
+        Update: {
+          cars_dot_com_rating?: number | null;
+          cars_dot_com_ratings_count?: number | null;
+          created_at?: string;
+          id?: number;
+          model_id?: number;
+        };
+      };
     };
     Views: {
       [_ in never]: never;
