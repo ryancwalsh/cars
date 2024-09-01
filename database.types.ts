@@ -23,7 +23,7 @@ export type Database = {
           drivetrain?: string | null;
           engine?: string | null;
           exterior_color?: string | null;
-          found_at_url?: string | null;
+          found_at_url: string;
           fuel_type?: string | null;
           image_url?: string | null;
           interior_color?: string | null;
@@ -58,7 +58,7 @@ export type Database = {
           drivetrain: string | null;
           engine: string | null;
           exterior_color: string | null;
-          found_at_url: string | null;
+          found_at_url: string;
           fuel_type: string | null;
           image_url: string | null;
           interior_color: string | null;
@@ -84,7 +84,7 @@ export type Database = {
           drivetrain?: string | null;
           engine?: string | null;
           exterior_color?: string | null;
-          found_at_url?: string | null;
+          found_at_url?: string;
           fuel_type?: string | null;
           image_url?: string | null;
           interior_color?: string | null;

@@ -7,18 +7,39 @@ import { type NextApiRequest, type NextApiResponse } from 'next';
 
 import { type Database } from '../../database.types';
 import { demoScrapedListingsJsonString } from '../../helpers/demo';
-import { upsertModels } from '../../helpers/supabase';
-import { type ScrapedListing } from '../../helpers/types';
+import { upsertListings, upsertModels } from '../../helpers/supabase';
+import { type ModelIdsMap, type ScrapedListing, type TableRows } from '../../helpers/types';
+
+function getLowercaseHash(listing: ScrapedListing): string {
+  return `${listing.year}_${listing.make}_${listing.model}_${listing.trim}`.toLowerCase();
+}
 
 function getModelsFromListings(listings: ScrapedListing[]) {
   return listings.map((listing) => {
     const modelToInsert: Database['public']['Tables']['models']['Insert'] = {
-      lowercase_hash: `${listing.year}_${listing.make}_${listing.model}_${listing.trim}`.toLowerCase(),
+      lowercase_hash: getLowercaseHash(listing),
       make: listing.make,
       model: listing.model,
       trim: listing.trim,
       year: listing.year,
     };
+
+    return modelToInsert;
+  });
+}
+
+function getListingsWithModelIds(listings: Array<ScrapedListing & { model_id: number }>, modelIdsMap: ModelIdsMap): TableRows<'listings'> {
+  return listings.map((listing) => {
+    const lowercaseHash = getLowercaseHash(listing);
+    const modelToInsert: Database['public']['Tables']['models']['Insert'] = {
+      model_id: modelIdsMap[lowercaseHash],
+      ...listing,
+    };
+    delete modelToInsert.make;
+    delete modelToInsert.model;
+    delete modelToInsert.year;
+    delete modelToInsert.trim;
+
     return modelToInsert;
   });
 }
@@ -32,8 +53,22 @@ export default async function handler(request: NextApiRequest, response: NextApi
 
   const models = getModelsFromListings(listings);
 
-  const result = await upsertModels(models, ['lowercase_hash']);
-  // FIXNOW: upsert Listings now that you have the model IDs.
+  const modelsResult = await upsertModels(models);
+  // console.log(JSON.stringify({ modelsResult }, null, 2));
+
+  const modelIdsMap: ModelIdsMap = {};
+  if (modelsResult.matchingRecords) {
+    for (const match of modelsResult.matchingRecords) {
+      modelIdsMap[match.lowercase_hash] = match.id;
+    }
+  }
+
+  console.log({ modelIdsMap });
+
+  const listingsToInsert = getListingsWithModelIds(listings, modelIdsMap);
+  console.log({ listingsToInsert });
+
+  const result = await upsertListings(listingsToInsert);
 
   response.status(result.data ? HttpStatusCode.Ok : HttpStatusCode.BadRequest).json(result);
 }
