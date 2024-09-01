@@ -4,6 +4,8 @@
 import { getChromium } from '../generic/chromium';
 import { type ScrapedListing } from '../types';
 
+const url = `https://www.cargurus.com/Cars/inventorylisting/viewDetailsFilterViewInventoryListing.action?sourceContext=untrackedWithinSite_false_0&distance=25&inventorySearchWidgetType=AUTO&zip=30009&maxAccidents=0&hideSalvage=true&hideFrameDamaged=true&transmissionTypes=AUTOMATIC&hideFleet=true&hideMultipleOwners=true&maxPrice=12000&daysOnMarketMax=7&startYear=2015&hideLemon=true&hideTheft=true&sortDir=ASC&sortType=BEST_MATCH&isDeliveryEnabled=true`;
+
 function removeSubstringAtEnd(string: string, substring: string) {
   if (string.endsWith(substring)) {
     return string.slice(0, -substring.length);
@@ -123,7 +125,6 @@ function isValidListing(element: Element): boolean {
 }
 
 function extractCarListings(listingElements: NodeListOf<Element> | undefined) {
-  // const listings = document.querySelectorAll('[data-testid="srp-tile-list"] > div');
   const cars = [];
 
   for (const listingElement of listingElements ?? []) {
@@ -140,7 +141,6 @@ function extractCarListings(listingElements: NodeListOf<Element> | undefined) {
 
 // eslint-disable-next-line max-lines-per-function
 export async function getLatestCarGurusListings() {
-  const url = `https://www.cargurus.com/Cars/inventorylisting/viewDetailsFilterViewInventoryListing.action?sourceContext=untrackedWithinSite_false_0&distance=25&inventorySearchWidgetType=AUTO&zip=30009&maxAccidents=0&hideSalvage=true&hideFrameDamaged=true&transmissionTypes=AUTOMATIC&hideFleet=true&hideMultipleOwners=true&maxPrice=12000&daysOnMarketMax=7&startYear=2015&hideLemon=true&hideTheft=true&sortDir=ASC&sortType=BEST_MATCH&isDeliveryEnabled=true`;
   const { browser, page } = await getChromium();
   try {
     await page.goto(url, {
@@ -151,11 +151,11 @@ export async function getLatestCarGurusListings() {
     const currentUrl = page.url();
     console.log({ currentUrl });
 
-    await page.screenshot({
-      path: 'carGurus.png',
-    });
-    const html = await page.content();
-    console.log({ html });
+    // await page.screenshot({
+    //   path: 'carGurus.png',
+    // });
+    // const html = await page.content();
+    // console.log({ html });
 
     // wait for all redirects https://stackoverflow.com/a/57007420/470749
     const listingsWrapperElement = await page.waitForSelector('#cargurus-listing-search', {
@@ -163,7 +163,7 @@ export async function getLatestCarGurusListings() {
     });
 
     const listingElements = await listingsWrapperElement?.evaluate(() => {
-      return document.querySelectorAll(' [data-testid="srp-tile-list"] > div .pazLTN');
+      return document.querySelectorAll('[data-testid="srp-tile-list"] > div .pazLTN');
     });
 
     const listings = extractCarListings(listingElements);
@@ -178,4 +178,4 @@ export async function getLatestCarGurusListings() {
   }
 }
 
-// getLatestCarGurusListings();
+getLatestCarGurusListings(); // FIXNOW: remove
