@@ -34,4 +34,4 @@ yarn-error.log*
 # vercel
 .vercel
 other_files/
-thenounproject_responses/
+logs/*

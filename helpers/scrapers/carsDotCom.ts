@@ -6,6 +6,7 @@
 import { getChromium } from '../generic/chromium';
 import { getNumberWithinString } from '../generic/numbers';
 import { upsertRatings } from '../supabase';
+import { saveHtml } from './logging';
 
 // eslint-disable-next-line max-lines-per-function
 export async function getCarsDotComRatings(searchQuery: string, modelId: number) {
@@ -19,8 +20,7 @@ export async function getCarsDotComRatings(searchQuery: string, modelId: number)
     });
     console.log(`visited ${url}`);
 
-    const currentUrl = page.url();
-    console.log({ currentUrl });
+    await saveHtml(page, url, searchQuery);
 
     // wait for all redirects https://stackoverflow.com/a/57007420/470749
     const reviewsElement = await page.waitForSelector('.ratings-section spark-rating', {

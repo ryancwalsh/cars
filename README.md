@@ -6,7 +6,6 @@ yarn dev
 
 # TODO
 
-- save scrape HTML locally for debugging
 - since carGurus is so good at blocking bots [and by the way is now blocking even my real human-controlled Brave browser (logged in or out) but not Firefox], get Chrome extension to upsert listings
 - use Retool to create a UI that allows us to mark listings as inactive, priority, etc. Shows ratings, images, etc.
 

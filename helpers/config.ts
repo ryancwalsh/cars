@@ -7,3 +7,4 @@ export const CHROME_PATH = process.env.CHROME_PATH ?? '';
  * https://github.com/Sparticuz/chromium/releases
  */
 export const CHROMIUM_TAR = process.env.CHROMIUM_TAR ?? 'https://github.com/Sparticuz/chromium/releases/download/v127.0.0/chromium-v127.0.0-pack.tar';
+export const SCRAPE_LOGS_PATH = process.env.SCRAPE_LOGS_PATH ?? '';

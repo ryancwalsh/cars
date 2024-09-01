@@ -1,6 +1,7 @@
 import { getChromium } from '../generic/chromium';
 import { getNumberWithinString } from '../generic/numbers';
 import { upsertRatings } from '../supabase';
+import { saveHtml } from './logging';
 
 /**
  * Use DuckDuckGo to find KBB URL, then visit KBB, and wait for reviews element
@@ -23,14 +24,8 @@ export async function getKbbRatings(searchQuery: string, modelId: number) {
     });
     console.log(`visited ${url}`);
 
-    const currentUrl = page.url();
-    console.log({ currentUrl });
+    await saveHtml(page, url, searchQuery);
 
-    // await page.screenshot({
-    //   path: 'kbb.png',
-    // });
-    // const html = await page.content();
-    // console.log({ html });
     // wait for all redirects https://stackoverflow.com/a/57007420/470749
     const appElement = await page.waitForSelector('#app', {
       timeout: 3_000, // max milliseconds to wait
