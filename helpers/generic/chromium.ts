@@ -1,14 +1,14 @@
 import chromium from '@sparticuz/chromium-min';
 import { launch } from 'puppeteer-core';
 
-import { CHROME_PATH } from '../config';
+import { CHROME_PATH, CHROMIUM_TAR } from '../config';
 
 export async function getChromium() {
   const options = {
     args: chromium.args,
     defaultViewport: chromium.defaultViewport,
-    executablePath: CHROME_PATH ?? (await chromium.executablePath('https://github.com/Sparticuz/chromium/releases/download/v127.0.0/chromium-v127.0.0-pack.tar')), // https://github.com/Sparticuz/chromium/releases
-    headless: chromium.headless,
+    executablePath: CHROME_PATH ?? (await chromium.executablePath(CHROMIUM_TAR)), // https://github.com/Sparticuz/chromium/releases
+    headless: true, // chromium.headless,
   };
   console.log({ options });
   const browser = await launch(options);
