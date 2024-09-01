@@ -1,5 +1,4 @@
 /**
- * Use DuckDuckGo to find KBB URL, then visit KBB, and wait for reviews element
  * https://github.com/Sparticuz/chromium?tab=readme-ov-file#-min-package
  * https://github.com/Sparticuz/chromium/blob/master/examples/remote-min-binary/index.js
  */
