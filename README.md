@@ -6,7 +6,6 @@ yarn dev
 
 # TODO
 
-- make an API route that scrapes DuckDuckGo and Edmunds and inserts ratings for a model
 - since carGurus is so good at blocking bots [and by the way is now blocking even my real human-controlled Brave browser (logged in or out) but not Firefox], get Chrome extension to upsert listings. Or figure out how to make Puppeteer using the cookies/localStorage/sessions of my real browser.
 - add weighted score to Retool webapp
 

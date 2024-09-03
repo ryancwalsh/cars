@@ -3,6 +3,7 @@
 import { type NextApiRequest, type NextApiResponse } from 'next';
 
 import { type Database } from '../../../database.types';
+import { Sites } from '../../../helpers/enums';
 import { supabaseClient } from '../../../helpers/supabase';
 import { fetchRatings } from './fetch';
 
@@ -23,6 +24,7 @@ select
   ratings.cars_dot_com_url,
   ratings.edmunds_rating,
   ratings.edmunds_ratings_count,
+  ratings.edmunds_repair_pal_reliability_rating,
   ratings.edmunds_monthly_cost_to_drive_estimate,
   ratings.edmunds_url,
   ratings.kbb_consumer_rating,
@@ -41,7 +43,7 @@ order by
 */
 
 function getQueryParameters(row: Database['public']['Views']['missing_ratings']['Row']) {
-  const site = row.cars_dot_com_rating ? 'kbb' : 'cars_dot_com';
+  const site = row.cars_dot_com_url ? Sites.CARS_DOT_COM : row.edmunds_url ? Sites.EDMUNDS : Sites.KBB;
   const searchQuery = `${row.year} ${row.make} ${row.model} ${row.trim}`;
   const queryParameters = {
     modelId: row.id,

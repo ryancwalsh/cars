@@ -173,6 +173,7 @@ export type Database = {
           edmunds_monthly_cost_to_drive_estimate?: number | null;
           edmunds_rating?: number | null;
           edmunds_ratings_count?: number | null;
+          edmunds_repair_pal_reliability_rating?: number | null;
           edmunds_url?: string | null;
           id?: number;
           kbb_consumer_rating?: number | null;
@@ -219,6 +220,7 @@ export type Database = {
           edmunds_monthly_cost_to_drive_estimate: number | null;
           edmunds_rating: number | null;
           edmunds_ratings_count: number | null;
+          edmunds_repair_pal_reliability_rating: number | null;
           edmunds_url: string | null;
           id: number;
           kbb_consumer_rating: number | null;
@@ -235,6 +237,7 @@ export type Database = {
           edmunds_monthly_cost_to_drive_estimate?: number | null;
           edmunds_rating?: number | null;
           edmunds_ratings_count?: number | null;
+          edmunds_repair_pal_reliability_rating?: number | null;
           edmunds_url?: string | null;
           id?: number;
           kbb_consumer_rating?: number | null;
@@ -270,6 +273,7 @@ export type Database = {
           edmunds_monthly_cost_to_drive_estimate: number | null;
           edmunds_rating: number | null;
           edmunds_ratings_count: number | null;
+          edmunds_repair_pal_reliability_rating: number | null;
           edmunds_url: string | null;
           id: number | null;
           kbb_consumer_rating: number | null;

@@ -2,12 +2,15 @@
 // https://github.com/sparticuz/chromium?tab=readme-ov-file#chromium-for-serverless-platforms
 // http://localhost:3000/api/ratings/fetch?site=cars&model_id=180&searchQuery=2015%20Honda%20Civic%20hatchback
 // http://localhost:3000/api/ratings/fetch?site=kbb&model_id=180&searchQuery=2015%20Honda%20Civic%20hatchback
+// http://localhost:3000/api/ratings/fetch?site=edmunds&model_id=180&searchQuery=2015%20Honda%20Civic%20hatchback
 // https://cars-walsh.vercel.app/api/ratings?site=cars&model_id=180&searchQuery=2015%20Honda%20Civic%20hatchback
 // https://vercel.com/ryancwalshs-projects/cars/logs?slug=app-future&slug=en-US&slug=ryancwalshs-projects&slug=cars&slug=logs&page=1&timeline=past30Minutes&live=true
 
 import { type NextApiRequest, type NextApiResponse } from 'next';
 
+import { Sites } from '../../../helpers/enums';
 import { getCarsDotComRatings } from '../../../helpers/scrapers/carsDotCom';
+import { getEdmundsRatings } from '../../../helpers/scrapers/edmunds';
 import { getKbbRatings } from '../../../helpers/scrapers/kbb';
 import { type upsertRatings } from '../../../helpers/supabase';
 
@@ -15,8 +18,10 @@ export async function fetchRatings(site: string, searchQuery: string, modelId: n
   console.log({ searchQuery, site });
 
   let result: null | Awaited<ReturnType<typeof upsertRatings>>;
-  if (site === 'kbb') {
+  if (site === Sites.KBB) {
     result = await getKbbRatings(searchQuery, modelId);
+  } else if (site === Sites.EDMUNDS) {
+    result = await getEdmundsRatings(searchQuery, modelId);
   } else {
     result = await getCarsDotComRatings(searchQuery, modelId);
   }
