@@ -4,11 +4,10 @@ import { type Page } from 'puppeteer-core';
 
 import { SCRAPE_LOGS_PATH } from '../config';
 
-export async function saveHtml(page: Page, url: string, searchQuery: string) {
+export async function saveHtml(page: Page, url: string, searchQuery: string): Promise<string> {
+  const currentUrl = page.url();
+  console.log({ currentUrl });
   if (SCRAPE_LOGS_PATH) {
-    const currentUrl = page.url();
-    console.log({ currentUrl });
-
     // await page.screenshot({
     //   path: 'screenshot.png',
     // });
@@ -31,4 +30,6 @@ export async function saveHtml(page: Page, url: string, searchQuery: string) {
 
     console.log(`HTML saved to ${filePath}`);
   }
+
+  return currentUrl;
 }

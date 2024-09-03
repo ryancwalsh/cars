@@ -24,7 +24,7 @@ export async function getKbbRatings(searchQuery: string, modelId: number) {
     });
     console.log(`visited ${url}`);
 
-    await saveHtml(page, url, searchQuery);
+    const currentUrl = await saveHtml(page, url, searchQuery);
 
     // wait for all redirects https://stackoverflow.com/a/57007420/470749
     const appElement = await page.waitForSelector('#app', {
@@ -45,6 +45,7 @@ export async function getKbbRatings(searchQuery: string, modelId: number) {
         kbb_consumer_rating: Number(consumerRatingString),
         kbb_consumer_ratings_count: getNumberWithinString(consumerRatingsCountDescription),
         kbb_expert_rating: Number(expertRatingString),
+        kbb_url: currentUrl,
         model_id: modelId,
       };
       console.log({ consumerRatingString, expertRatingString, payload });

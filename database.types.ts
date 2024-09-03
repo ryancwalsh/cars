@@ -48,6 +48,13 @@ export type Database = {
             foreignKeyName: 'listings_model_id_fkey';
             isOneToOne: false;
             referencedColumns: ['id'];
+            referencedRelation: 'finished_ratings';
+          },
+          {
+            columns: ['model_id'];
+            foreignKeyName: 'listings_model_id_fkey';
+            isOneToOne: false;
+            referencedColumns: ['id'];
             referencedRelation: 'missing_ratings';
           },
           {
@@ -56,6 +63,13 @@ export type Database = {
             isOneToOne: false;
             referencedColumns: ['id'];
             referencedRelation: 'models';
+          },
+          {
+            columns: ['model_id'];
+            foreignKeyName: 'listings_model_id_fkey';
+            isOneToOne: false;
+            referencedColumns: ['models__id'];
+            referencedRelation: 'queue';
           },
         ];
         Row: {
@@ -154,14 +168,27 @@ export type Database = {
         Insert: {
           cars_dot_com_rating?: number | null;
           cars_dot_com_ratings_count?: number | null;
+          cars_dot_com_url?: string | null;
           created_at?: string;
+          edmunds_monthly_cost_to_drive_estimate?: number | null;
+          edmunds_rating?: number | null;
+          edmunds_ratings_count?: number | null;
+          edmunds_url?: string | null;
           id?: number;
           kbb_consumer_rating?: number | null;
           kbb_consumer_ratings_count?: number | null;
           kbb_expert_rating?: number | null;
+          kbb_url?: string | null;
           model_id: number;
         };
         Relationships: [
+          {
+            columns: ['model_id'];
+            foreignKeyName: 'ratings_model_id_fkey';
+            isOneToOne: true;
+            referencedColumns: ['id'];
+            referencedRelation: 'finished_ratings';
+          },
           {
             columns: ['model_id'];
             foreignKeyName: 'ratings_model_id_fkey';
@@ -176,31 +203,50 @@ export type Database = {
             referencedColumns: ['id'];
             referencedRelation: 'models';
           },
+          {
+            columns: ['model_id'];
+            foreignKeyName: 'ratings_model_id_fkey';
+            isOneToOne: true;
+            referencedColumns: ['models__id'];
+            referencedRelation: 'queue';
+          },
         ];
         Row: {
           cars_dot_com_rating: number | null;
           cars_dot_com_ratings_count: number | null;
+          cars_dot_com_url: string | null;
           created_at: string;
+          edmunds_monthly_cost_to_drive_estimate: number | null;
+          edmunds_rating: number | null;
+          edmunds_ratings_count: number | null;
+          edmunds_url: string | null;
           id: number;
           kbb_consumer_rating: number | null;
           kbb_consumer_ratings_count: number | null;
           kbb_expert_rating: number | null;
+          kbb_url: string | null;
           model_id: number;
         };
         Update: {
           cars_dot_com_rating?: number | null;
           cars_dot_com_ratings_count?: number | null;
+          cars_dot_com_url?: string | null;
           created_at?: string;
+          edmunds_monthly_cost_to_drive_estimate?: number | null;
+          edmunds_rating?: number | null;
+          edmunds_ratings_count?: number | null;
+          edmunds_url?: string | null;
           id?: number;
           kbb_consumer_rating?: number | null;
           kbb_consumer_ratings_count?: number | null;
           kbb_expert_rating?: number | null;
+          kbb_url?: string | null;
           model_id?: number;
         };
       };
     };
     Views: {
-      missing_ratings: {
+      finished_ratings: {
         Relationships: [];
         Row: {
           cars_dot_com_rating: number | null;
@@ -212,6 +258,131 @@ export type Database = {
           make: string | null;
           model: string | null;
           trim: string | null;
+          year: number | null;
+        };
+      };
+      missing_ratings: {
+        Relationships: [];
+        Row: {
+          cars_dot_com_rating: number | null;
+          cars_dot_com_ratings_count: number | null;
+          cars_dot_com_url: string | null;
+          edmunds_monthly_cost_to_drive_estimate: number | null;
+          edmunds_rating: number | null;
+          edmunds_ratings_count: number | null;
+          edmunds_url: string | null;
+          id: number | null;
+          kbb_consumer_rating: number | null;
+          kbb_consumer_ratings_count: number | null;
+          kbb_expert_rating: number | null;
+          kbb_url: string | null;
+          make: string | null;
+          model: string | null;
+          trim: string | null;
+          year: number | null;
+        };
+      };
+      queue: {
+        Relationships: [
+          {
+            columns: ['model_id'];
+            foreignKeyName: 'listings_model_id_fkey';
+            isOneToOne: false;
+            referencedColumns: ['id'];
+            referencedRelation: 'models';
+          },
+          {
+            columns: ['model_id'];
+            foreignKeyName: 'listings_model_id_fkey';
+            isOneToOne: false;
+            referencedColumns: ['id'];
+            referencedRelation: 'finished_ratings';
+          },
+          {
+            columns: ['model_id'];
+            foreignKeyName: 'listings_model_id_fkey';
+            isOneToOne: false;
+            referencedColumns: ['id'];
+            referencedRelation: 'missing_ratings';
+          },
+          {
+            columns: ['model_id'];
+            foreignKeyName: 'listings_model_id_fkey';
+            isOneToOne: false;
+            referencedColumns: ['models__id'];
+            referencedRelation: 'queue';
+          },
+          {
+            columns: ['ratings__model_id'];
+            foreignKeyName: 'ratings_model_id_fkey';
+            isOneToOne: true;
+            referencedColumns: ['id'];
+            referencedRelation: 'models';
+          },
+          {
+            columns: ['ratings__model_id'];
+            foreignKeyName: 'ratings_model_id_fkey';
+            isOneToOne: true;
+            referencedColumns: ['id'];
+            referencedRelation: 'finished_ratings';
+          },
+          {
+            columns: ['ratings__model_id'];
+            foreignKeyName: 'ratings_model_id_fkey';
+            isOneToOne: true;
+            referencedColumns: ['id'];
+            referencedRelation: 'missing_ratings';
+          },
+          {
+            columns: ['ratings__model_id'];
+            foreignKeyName: 'ratings_model_id_fkey';
+            isOneToOne: true;
+            referencedColumns: ['models__id'];
+            referencedRelation: 'queue';
+          },
+        ];
+        Row: {
+          back_seat_folds_flat: boolean | null;
+          body_type: string | null;
+          cars_dot_com_rating: number | null;
+          cars_dot_com_ratings_count: number | null;
+          concern: string | null;
+          concerns: string | null;
+          created_at: string | null;
+          drivetrain: string | null;
+          engine: string | null;
+          exterior_color: string | null;
+          found_at_url: string | null;
+          fuel_type: string | null;
+          image_url: string | null;
+          interior_color: string | null;
+          is_active: boolean | null;
+          kbb_consumer_rating: number | null;
+          kbb_consumer_ratings_count: number | null;
+          kbb_expert_rating: number | null;
+          listing_url: string | null;
+          location: string | null;
+          lowercase_hash: string | null;
+          make: string | null;
+          mileage: number | null;
+          model: string | null;
+          model_id: number | null;
+          models__created_at: string | null;
+          models__id: number | null;
+          models__note: string | null;
+          note: string | null;
+          notes_from_test_drives: string | null;
+          number_of_owners: number | null;
+          price_approx: number | null;
+          priority: number | null;
+          ratings__created_at: string | null;
+          ratings__id: number | null;
+          ratings__model_id: number | null;
+          safety_rating: number | null;
+          transmission: string | null;
+          trim: string | null;
+          vin: string | null;
+          vin_report_url: string | null;
           year: number | null;
         };
       };

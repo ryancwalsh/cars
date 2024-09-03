@@ -20,15 +20,22 @@ select
   models.trim,
   ratings.cars_dot_com_rating,
   ratings.cars_dot_com_ratings_count,
+  ratings.cars_dot_com_url,
+  ratings.edmunds_rating,
+  ratings.edmunds_ratings_count,
+  ratings.edmunds_monthly_cost_to_drive_estimate,
+  ratings.edmunds_url,
   ratings.kbb_consumer_rating,
   ratings.kbb_consumer_ratings_count,
-  ratings.kbb_expert_rating
+  ratings.kbb_expert_rating,
+  ratings.kbb_url
 from
   models
   left join ratings on models.id = ratings.model_id
 where
-  ratings.kbb_consumer_rating is null
-  OR ratings.cars_dot_com_rating is null
+ratings.cars_dot_com_url is null 
+OR ratings.edmunds_url is null
+OR ratings.kbb_url is null
 order by
   models.id ASC;
 */

@@ -20,7 +20,7 @@ export async function getCarsDotComRatings(searchQuery: string, modelId: number)
     });
     console.log(`visited ${url}`);
 
-    await saveHtml(page, url, searchQuery);
+    const currentUrl = await saveHtml(page, url, searchQuery);
 
     // wait for all redirects https://stackoverflow.com/a/57007420/470749
     const reviewsElement = await page.waitForSelector('.ratings-section spark-rating', {
@@ -35,12 +35,13 @@ export async function getCarsDotComRatings(searchQuery: string, modelId: number)
       const textContent = await childElement?.getProperty('textContent');
       const text = await textContent?.jsonValue();
 
-      const ratings = {
+      const payload = {
         cars_dot_com_rating: Number(ratingString),
         cars_dot_com_ratings_count: getNumberWithinString(text),
+        cars_dot_com_url: currentUrl,
+        model_id: modelId,
       };
-      const payload = { model_id: modelId, ...ratings };
-      console.log({ payload, ratings, ratingString, text, textContent });
+      console.log({ payload, ratingString, text, textContent });
       const result = await upsertRatings([payload]);
 
       return result;
