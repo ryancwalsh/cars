@@ -1,5 +1,6 @@
 -- public.finished_ratings source
-CREATE OR REPLACE VIEW public.finished_ratings AS
+CREATE OR REPLACE VIEW public.finished_ratings WITH ( security_invoker = TRUE
+) AS
 SELECT
     models.id,
     models.year,

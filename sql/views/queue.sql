@@ -1,5 +1,6 @@
-CREATE OR REPLACE VIEW queue
-SECURITY INVOKER AS
+-- public.queue source
+CREATE OR REPLACE VIEW public.queue WITH ( security_invoker = TRUE
+) AS
 SELECT
     listings.body_type,
     listings.concerns,
