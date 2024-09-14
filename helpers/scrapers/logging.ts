@@ -1,8 +1,12 @@
 import fs from 'node:fs';
 
-import { type Page } from 'puppeteer-core';
+import { type Page } from 'puppeteer';
 
 import { SCRAPE_LOGS_PATH } from '../config';
+
+function getSafeString(input: string): string {
+  return input.replaceAll(/[^a-z\d]/giu, '_');
+}
 
 export async function saveHtml(page: Page, url: string, searchQuery: string): Promise<string> {
   const currentUrl = page.url();
@@ -12,10 +16,13 @@ export async function saveHtml(page: Page, url: string, searchQuery: string): Pr
     //   path: 'screenshot.png',
     // });
     const html = await page.content();
-    const safeFilename = currentUrl.replaceAll(/[^a-z\d]/giu, '_').toLowerCase();
-    const details = JSON.stringify({ searchQuery, url }, null, 2);
+    const maxLength = 100;
+    const datetime = new Date().toISOString();
+    const safeFilename = `${getSafeString(currentUrl.slice(-maxLength)).toLowerCase()}${getSafeString(datetime)}`;
+    const details = JSON.stringify({ currentUrl, datetime, searchQuery, url }, null, 2);
 
     const filePath = `${SCRAPE_LOGS_PATH}/${safeFilename}.html`;
+    console.log({ filePath, maxLength });
 
     // Create the comment with details
     const comment = `<!--

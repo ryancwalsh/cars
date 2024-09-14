@@ -1,8 +1,10 @@
-// `CHROME_PATH=/usr/bin/google-chrome npx tsx helpers/scrapers/carGurus.ts`
+// `clear && CHROME_PATH=/opt/brave.com/brave/brave SCRAPE_LOGS_PATH=/home/rcwalsh/code/cars/logs BROWSER_USER_DATA_DIRECTORY=/home/rcwalsh/.config/BraveSoftware/Brave-Browser/Default npx tsx helpers/scrapers/carGurus.ts`
 
 /* eslint-disable canonical/id-match */
+import { SCRAPE_LOGS_PATH } from '../config';
 import { getChromium } from '../generic/chromium';
 import { type ScrapedListing } from '../types';
+import { saveHtml } from './logging';
 
 const url = `https://www.cargurus.com/Cars/inventorylisting/viewDetailsFilterViewInventoryListing.action?sourceContext=untrackedWithinSite_false_0&distance=25&inventorySearchWidgetType=AUTO&zip=30009&maxAccidents=0&hideSalvage=true&hideFrameDamaged=true&transmissionTypes=AUTOMATIC&hideFleet=true&hideMultipleOwners=true&maxPrice=12000&daysOnMarketMax=7&startYear=2015&hideLemon=true&hideTheft=true&sortDir=ASC&sortType=BEST_MATCH&isDeliveryEnabled=true`;
 
@@ -133,6 +135,8 @@ function extractCarListings(listingElements: NodeListOf<Element> | undefined) {
       if (car) {
         cars.push(car);
       }
+    } else {
+      console.warn('skipping invalid listing', listingElement);
     }
   }
 
@@ -148,23 +152,26 @@ export async function getLatestCarGurusListings() {
     });
     console.log(`visited ${url}`);
 
-    const currentUrl = page.url();
-    console.log({ currentUrl });
+    const now = new Date().toISOString();
 
-    // await page.screenshot({
-    //   path: 'carGurus.png',
-    // });
-    // const html = await page.content();
-    // console.log({ html });
+    await saveHtml(page, url, `carGurus_${now}`);
+
+    await page.screenshot({
+      path: `${SCRAPE_LOGS_PATH}/carGurus_${now}.png`,
+    });
 
     // wait for all redirects https://stackoverflow.com/a/57007420/470749
     const listingsWrapperElement = await page.waitForSelector('#cargurus-listing-search', {
       timeout: 3_000, // max milliseconds to wait
     });
 
+    console.log('listingsWrapperElement', JSON.stringify(listingsWrapperElement, null, 2));
+
     const listingElements = await listingsWrapperElement?.evaluate(() => {
-      return document.querySelectorAll('[data-testid="srp-tile-list"] > div .pazLTN');
+      return document.querySelectorAll('[data-testid="srp-tile-list"] > div.pazLTN');
     });
+
+    console.log('listingElements', JSON.stringify(listingElements, null, 2));
 
     const listings = extractCarListings(listingElements);
     console.log({ listings });

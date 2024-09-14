@@ -23,8 +23,8 @@ yarn dev
 
 # TODO
 
-- since carGurus is so good at blocking bots [and by the way is now blocking even my real human-controlled Brave browser (logged in or out) but not Firefox], get Chrome extension to upsert listings. Or figure out how to make Puppeteer using the cookies/localStorage/sessions of my real browser.
 - add weighted score to Retool webapp
+- add screeshots of Supabase, Retool, etc to this readme
 
 ## Later
 
@@ -34,6 +34,21 @@ yarn dev
 - use Retool to create a UI that allows blocking models
 - Autotrader?
 - make Retool mobile app
+
+# Notes
+
+I think as long as I:
+
+- run it on my local computer (on a residential IP instead of in a cloud like AWS)
+- don't use "headless" mode but instead have it open an actual browser window
+- tell it to rely on the "userDataDir" of my real browser where I've already passed the captcha
+- use https://www.npmjs.com/package/puppeteer-extra-plugin-stealth
+
+it seems to work. 🤞
+
+It linked to https://bot.sannysoft.com/ which is a cool page.
+
+P.S. Free up to 1k URLs: https://www.zenrows.com/?fpr=signup
 
 # Links (protected)
 

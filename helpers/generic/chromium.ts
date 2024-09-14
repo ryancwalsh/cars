@@ -1,14 +1,20 @@
-import chromium from '@sparticuz/chromium-min';
-import { launch } from 'puppeteer-core';
+import { launch } from 'puppeteer';
 
-import { CHROME_PATH, CHROMIUM_TAR } from '../config';
+import { BROWSER_USER_DATA_DIRECTORY, CHROME_PATH, IS_BROWSER_HEADLESS } from '../config';
 
 export async function getChromium() {
   const options = {
-    args: chromium.args,
-    defaultViewport: chromium.defaultViewport,
-    executablePath: CHROME_PATH ?? (await chromium.executablePath(CHROMIUM_TAR)), // https://github.com/Sparticuz/chromium/releases
-    headless: true, // chromium.headless,
+    // args: chromium.args,
+    // defaultViewport: chromium.defaultViewport,
+    args: ['--no-sandbox', `--window-size=1920,1080`],
+    defaultViewport: {
+      height: 1_080,
+      width: 1_920,
+    },
+    dumpio: true,
+    executablePath: CHROME_PATH, // ?? (await chromium.executablePath(CHROMIUM_TAR)), // https://github.com/Sparticuz/chromium/releases
+    headless: IS_BROWSER_HEADLESS, // chromium.headless,
+    userDataDir: BROWSER_USER_DATA_DIRECTORY,
   };
   console.log({ options });
   const browser = await launch(options);
