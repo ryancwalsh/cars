@@ -18,8 +18,8 @@ async function sleep(ms: number): Promise<void> {
 
 // Main function to manage the repeated calls
 async function executeWithRandomIntervals(): Promise<void> {
-  const MIN_DELAY_SECONDS = 10;
-  const MAX_DELAY_SECONDS = 20;
+  const MIN_DELAY_SECONDS = 5;
+  const MAX_DELAY_SECONDS = 10;
 
   while (true) {
     try {

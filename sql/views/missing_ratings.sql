@@ -1,5 +1,7 @@
 -- public.missing_ratings source
-CREATE OR REPLACE VIEW public.missing_ratings WITH ( security_invoker = TRUE
+DROP VIEW IF EXISTS public.missing_ratings;
+
+CREATE VIEW public.missing_ratings WITH ( security_invoker = TRUE
 ) AS
 SELECT
     models.id,
@@ -29,5 +31,5 @@ WHERE (
     OR ratings.kbb_url IS NULL)
 AND listings.is_active = TRUE
 ORDER BY
-    models.id;
+    listings.last_checked_at DESC;
 
