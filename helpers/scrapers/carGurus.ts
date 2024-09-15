@@ -10,6 +10,8 @@ import { saveHtml } from './logging';
 
 const url = `https://www.cargurus.com/Cars/inventorylisting/viewDetailsFilterViewInventoryListing.action?sourceContext=untrackedWithinSite_false_0&distance=25&inventorySearchWidgetType=AUTO&zip=30009&maxAccidents=0&hideSalvage=true&hideFrameDamaged=true&transmissionTypes=AUTOMATIC&hideFleet=true&hideMultipleOwners=true&maxPrice=12000&daysOnMarketMax=7&startYear=2015&hideLemon=true&hideTheft=true&sortDir=ASC&sortType=BEST_MATCH&isDeliveryEnabled=true`;
 
+// const url = `https://www.example.com`;
+
 const listingTileClass = '.pazLTN'; // must match listingTileClassInner
 
 function removeSubstringAtEnd(string: string, substring: string) {
@@ -33,8 +35,8 @@ function cleanListing(listingElement: Element, listing: ScrapedListing) {
   const imgElement = listingElement.querySelector('img');
   listing.image_url = imgElement ? imgElement.src : null;
 
-  const listingLink = listingElement.querySelector('a[data-cg-ft="car-blade-link"]');
-  listing.found_at_url = listingLink ? 'https://www.cargurus.com/Cars/inventorylisting/viewDetailsFilterViewInventoryListing.action' + listingLink.getAttribute('href') : null;
+  const listingLink = listingElement.querySelector('a[data-testid="car-blade-link"]');
+  listing.found_at_url = listingLink ? `https://www.cargurus.com/Cars/inventorylisting/viewDetailsFilterViewInventoryListing.action${listingLink.getAttribute('href')}` : null;
 }
 
 // eslint-disable-next-line max-lines-per-function
@@ -195,7 +197,7 @@ export async function getLatestCarGurusListings() {
     // console.log({ elements });
     const listings = extractCarListings(elements);
     console.log('Extracted listings:', listings);
-
+    console.log('helpers/scrapers/carGurus.ts finished.');
     return listings;
   } catch (error) {
     console.error('Error finding the listings:', error);

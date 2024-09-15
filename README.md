@@ -23,8 +23,7 @@ yarn dev
 
 # TODO
 
-- make an API route that scrapes CarGurus search results and saves to Supabase
-- make a cron job that calls the CarGurus scraper
+- make cron jobs that call the CarGurus scraper and the pages/api/ratings/determineMissing.ts
 - figure out why `ScrapedListing` type is equivalent to `any`
 - add weighted score to Retool webapp
 - add screeshots of Supabase, Retool, etc to this readme
@@ -34,7 +33,7 @@ yarn dev
 - get it working on Vercel (lower priority since I could run this on my local laptop or Digital Ocean)
 - use Retool to create a UI that allows blocking models
 - Autotrader?
-- make Retool mobile app
+- make Retool mobile app at https://rcwalsh.retool.com/mobile/editor/Cars%20mobile
 
 # Notes
 
@@ -44,6 +43,7 @@ I think as long as I:
 - don't use "headless" mode but instead have it open an actual browser window
 - tell it to rely on the "userDataDir" of my real browser where I've already passed the captcha
 - use https://www.npmjs.com/package/puppeteer-extra-plugin-stealth
+- run the browser via a TypeScript script directly instead of within a Next.js API endpoint
 
 it seems to work. 🤞
 
