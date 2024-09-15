@@ -20,15 +20,16 @@ async function sleep(ms: number): Promise<void> {
 async function executeWithRandomIntervals(): Promise<void> {
   const MIN_DELAY_SECONDS = 5;
   const MAX_DELAY_SECONDS = 10;
+  const SLOW_DELAY_MS = 1_000 * 60 * 60 * 2; // 2 hr
 
   while (true) {
     try {
-      await determineMissing();
+      const rowsRemaining = await determineMissing();
+      console.log({ rowsRemaining });
+      const delayMs = rowsRemaining === 0 ? SLOW_DELAY_MS : getRandomDelay(MIN_DELAY_SECONDS, MAX_DELAY_SECONDS);
+      console.log(`[${new Date().toISOString()}] Waiting for ${(delayMs / 1_000).toFixed(2)} seconds`);
 
-      const delay = getRandomDelay(MIN_DELAY_SECONDS, MAX_DELAY_SECONDS);
-      console.log(`[${new Date().toISOString()}] Waiting for ${(delay / 1_000).toFixed(2)} seconds`);
-
-      await sleep(delay);
+      await sleep(delayMs);
     } catch (error) {
       console.error(`[${new Date().toISOString()}] Error in determineMissing:`, error);
       // Decide on retry strategy or error handling as needed

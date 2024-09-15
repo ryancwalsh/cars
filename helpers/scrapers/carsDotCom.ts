@@ -3,7 +3,7 @@
  * https://github.com/Sparticuz/chromium/blob/master/examples/remote-min-binary/index.js
  */
 
-import { getChromium } from '../generic/chromium';
+import { closeAllOpenTabs, getChromium } from '../generic/chromium';
 import { getNumberWithinString } from '../generic/numbers';
 import { upsertRatings } from '../supabase';
 import { saveHtml } from './logging';
@@ -12,7 +12,14 @@ import { saveHtml } from './logging';
 export async function getCarsDotComRatings(searchQuery: string, modelId: number) {
   // https://superuser.com/questions/1496083/google-feeling-lucky-url-causing-redirect-notice/1496084#comment2934824_1496084
   // https://duckduckgo.com/bangs
-  const url = `https://duckduckgo.com/?q=%5C${encodeURIComponent(`${searchQuery} ratings reviews site:cars.com !ducky`)}`;
+  const url = `https://duckduckgo.com/?q=${encodeURIComponent(`${searchQuery} ratings consumer reviews site:cars.com !ducky`)}`;
+  console.log({ url });
+  await upsertRatings([
+    {
+      cars_dot_com_url: url,
+      model_id: modelId,
+    },
+  ]);
   const { browser, page } = await getChromium();
   try {
     await page.goto(url, {
@@ -53,6 +60,7 @@ export async function getCarsDotComRatings(searchQuery: string, modelId: number)
     return null;
   } finally {
     await page.close();
+    await closeAllOpenTabs(browser);
     await browser.close();
   }
 }

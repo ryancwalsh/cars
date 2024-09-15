@@ -1,4 +1,4 @@
-import { getChromium } from '../generic/chromium';
+import { closeAllOpenTabs, getChromium } from '../generic/chromium';
 import { getNumberWithinString } from '../generic/numbers';
 import { upsertRatings } from '../supabase';
 import { saveHtml } from './logging';
@@ -14,7 +14,7 @@ export async function getKbbRatings(searchQuery: string, modelId: number) {
   // https://duckduckgo.com/bangs?q=kbb
   // const url = `https://duckduckgo.com/?q=%5C${encodeURIComponent(searchQuery)} !kbb`;
   const url = `https://duckduckgo.com/?q=%5C${encodeURIComponent(`${searchQuery} site:kbb.com !ducky`)}`;
-
+  console.log({ url });
   const { browser, page } = await getChromium();
 
   try {
@@ -61,6 +61,7 @@ export async function getKbbRatings(searchQuery: string, modelId: number) {
     return null;
   } finally {
     await page.close();
+    await closeAllOpenTabs(browser);
     await browser.close();
   }
 }

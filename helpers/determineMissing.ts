@@ -35,7 +35,7 @@ export async function determineMissing() {
 
   console.log({ rows }, rows?.length);
 
-  if (rows) {
+  if (rows && rows.length > 0) {
     const firstRow = rows[0];
     console.log({ firstRow });
     const { modelId, site, searchQuery } = getQueryParameters(firstRow);
@@ -44,4 +44,6 @@ export async function determineMissing() {
   }
 
   console.log('determineMissing finished.');
+
+  return rows ? rows.length : 0;
 }

@@ -9,6 +9,7 @@ SELECT
     allowed_models.make,
     allowed_models.model,
     allowed_models."trim",
+    allowed_models.lowercase_hash,
     ratings.cars_dot_com_rating,
     ratings.cars_dot_com_ratings_count,
     ratings.cars_dot_com_url,

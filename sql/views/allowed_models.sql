@@ -1,6 +1,5 @@
-DROP VIEW IF EXISTS public.allowed_models;
-
-CREATE VIEW public.allowed_models WITH ( security_invoker = TRUE
+-- DROP VIEW IF EXISTS public.allowed_models;
+CREATE OR REPLACE VIEW public.allowed_models WITH ( security_invoker = TRUE
 ) AS
 SELECT
     id,
@@ -39,7 +38,7 @@ FROM (
 )
 )
 ) IN (
-                '2012_toyota_camry', '2014_toyota_camry', '2015_hyundai_sonata', '2016_hyundai_sonata', '2016_nissan_pathfinder', '2017_hyundai_sonata', '2018_ford_escape', '2018_hyundai_sonata', '2018_toyota_camry', '2019_hyundai_sonata', '2020_nissan_pathfinder', 'dodge_challenger', 'dodge_charger', 'f-150', 'forester', 'murano'
+                '2012_toyota_camry', '2014_toyota_camry', '2015_hyundai_sonata', '2016_hyundai_sonata', '2016_nissan_pathfinder', '2017_hyundai_sonata', '2018_ford_escape', '2018_hyundai_sonata', '2018_toyota_camry', '2019_hyundai_sonata', '2020_nissan_pathfinder'
 )
             OR LOWER(
                 lowercase_hash
@@ -50,6 +49,9 @@ FROM (
             OR LOWER(
                 lowercase_hash
 ) LIKE '%ford_f-150%'
+            OR LOWER(
+                model
+) = 'transit cargo'
             OR LOWER(
                 lowercase_hash
 ) LIKE '%subaru_forester%'
