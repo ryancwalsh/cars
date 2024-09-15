@@ -22,10 +22,12 @@ SELECT
 FROM
     models
     LEFT JOIN ratings ON models.id = ratings.model_id
-WHERE
+    LEFT JOIN listings ON listings.model_id = models.id
+WHERE (
     ratings.cars_dot_com_url IS NULL
     OR ratings.edmunds_url IS NULL
-    OR ratings.kbb_url IS NULL
+    OR ratings.kbb_url IS NULL)
+AND listings.is_active = TRUE
 ORDER BY
     models.id;
 

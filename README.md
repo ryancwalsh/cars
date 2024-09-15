@@ -23,7 +23,6 @@ yarn dev
 
 # TODO
 
-1. update `missing_ratings` view to only care about active listings
 1. make cron jobs that call the CarGurus scraper and the pages/api/ratings/determineMissing.ts
 1. make cron job that checks each "active" listing in the table that hasn't been checked in X hours to see if it's still available at CarGurus and updates the row to say when it was last checked (and update to inactive as necessary)
 1. figure out why `ScrapedListing` type is equivalent to `any`
