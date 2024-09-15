@@ -336,6 +336,7 @@ export type Database = {
           kbb_consumer_ratings_count: number | null;
           kbb_expert_rating: number | null;
           kbb_url: string | null;
+          lowercase_hash: string | null;
           make: string | null;
           model: string | null;
           trim: string | null;

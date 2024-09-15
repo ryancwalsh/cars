@@ -48,7 +48,7 @@ SELECT
     ratings.model_id AS ratings__model_id
 FROM
     listings
-    LEFT JOIN allowed_models ON listings.model_id = allowed_models.id
+    INNER JOIN allowed_models ON listings.model_id = allowed_models.id
     LEFT JOIN ratings ON allowed_models.id = ratings.model_id
 WHERE
     listings.is_active = TRUE
