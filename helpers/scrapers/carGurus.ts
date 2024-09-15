@@ -203,6 +203,7 @@ export async function getLatestCarGurusListings() {
     console.error('Error finding the listings:', error);
     return null;
   } finally {
+    await page.close();
     await browser.close();
   }
 }

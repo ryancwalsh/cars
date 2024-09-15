@@ -1,7 +1,10 @@
 -- public.queue source
-CREATE OR REPLACE VIEW public.queue WITH ( security_invoker = TRUE
+DROP VIEW IF EXISTS public.queue;
+
+CREATE VIEW public.queue WITH ( security_invoker = TRUE
 ) AS
 SELECT
+    allowed_models.lowercase_hash,
     listings.body_type,
     listings.concerns,
     listings.created_at,
@@ -26,16 +29,15 @@ SELECT
     listings.transmission,
     listings.vin,
     listings.vin_report_url,
-    models.id AS models__id,
-    models.back_seat_folds_flat,
-    models.concern,
-    models.created_at AS models__created_at,
-    models.lowercase_hash,
-    models.make,
-    models.model,
-    models.note AS models__note,
-    models.trim,
-    models.year,
+    allowed_models.id AS models__id,
+    allowed_models.back_seat_folds_flat,
+    allowed_models.concern,
+    allowed_models.created_at AS models__created_at,
+    allowed_models.make,
+    allowed_models.model,
+    allowed_models.note AS models__note,
+    allowed_models.trim,
+    allowed_models.year,
     ratings.id AS ratings__id,
     ratings.cars_dot_com_rating,
     ratings.cars_dot_com_ratings_count,
@@ -46,8 +48,8 @@ SELECT
     ratings.model_id AS ratings__model_id
 FROM
     listings
-    LEFT JOIN models ON listings.model_id = models.id
-    LEFT JOIN ratings ON models.id = ratings.model_id
+    LEFT JOIN allowed_models ON listings.model_id = allowed_models.id
+    LEFT JOIN ratings ON allowed_models.id = ratings.model_id
 WHERE
     listings.is_active = TRUE
 ORDER BY

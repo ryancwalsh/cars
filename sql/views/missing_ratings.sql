@@ -4,11 +4,11 @@ DROP VIEW IF EXISTS public.missing_ratings;
 CREATE VIEW public.missing_ratings WITH ( security_invoker = TRUE
 ) AS
 SELECT
-    models.id,
-    models.year,
-    models.make,
-    models.model,
-    models."trim",
+    allowed_models.id,
+    allowed_models.year,
+    allowed_models.make,
+    allowed_models.model,
+    allowed_models."trim",
     ratings.cars_dot_com_rating,
     ratings.cars_dot_com_ratings_count,
     ratings.cars_dot_com_url,
@@ -22,9 +22,9 @@ SELECT
     ratings.kbb_expert_rating,
     ratings.kbb_url
 FROM
-    models
-    LEFT JOIN ratings ON models.id = ratings.model_id
-    LEFT JOIN listings ON listings.model_id = models.id
+    allowed_models
+    LEFT JOIN ratings ON allowed_models.id = ratings.model_id
+    LEFT JOIN listings ON listings.model_id = allowed_models.id
 WHERE (
     ratings.cars_dot_com_url IS NULL
     OR ratings.edmunds_url IS NULL

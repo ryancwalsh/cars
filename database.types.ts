@@ -49,6 +49,13 @@ export type Database = {
             foreignKeyName: 'listings_model_id_fkey';
             isOneToOne: false;
             referencedColumns: ['id'];
+            referencedRelation: 'allowed_models';
+          },
+          {
+            columns: ['model_id'];
+            foreignKeyName: 'listings_model_id_fkey';
+            isOneToOne: false;
+            referencedColumns: ['id'];
             referencedRelation: 'finished_ratings';
           },
           {
@@ -191,6 +198,13 @@ export type Database = {
             foreignKeyName: 'ratings_model_id_fkey';
             isOneToOne: true;
             referencedColumns: ['id'];
+            referencedRelation: 'allowed_models';
+          },
+          {
+            columns: ['model_id'];
+            foreignKeyName: 'ratings_model_id_fkey';
+            isOneToOne: true;
+            referencedColumns: ['id'];
             referencedRelation: 'finished_ratings';
           },
           {
@@ -252,6 +266,21 @@ export type Database = {
       };
     };
     Views: {
+      allowed_models: {
+        Relationships: [];
+        Row: {
+          back_seat_folds_flat: boolean | null;
+          concern: string | null;
+          created_at: string | null;
+          id: number | null;
+          lowercase_hash: string | null;
+          make: string | null;
+          model: string | null;
+          note: string | null;
+          trim: string | null;
+          year: number | null;
+        };
+      };
       check_whether_still_available: {
         Insert: {
           created_at?: string | null;
@@ -327,6 +356,13 @@ export type Database = {
             foreignKeyName: 'listings_model_id_fkey';
             isOneToOne: false;
             referencedColumns: ['id'];
+            referencedRelation: 'allowed_models';
+          },
+          {
+            columns: ['model_id'];
+            foreignKeyName: 'listings_model_id_fkey';
+            isOneToOne: false;
+            referencedColumns: ['id'];
             referencedRelation: 'finished_ratings';
           },
           {
@@ -349,6 +385,13 @@ export type Database = {
             isOneToOne: true;
             referencedColumns: ['id'];
             referencedRelation: 'models';
+          },
+          {
+            columns: ['ratings__model_id'];
+            foreignKeyName: 'ratings_model_id_fkey';
+            isOneToOne: true;
+            referencedColumns: ['id'];
+            referencedRelation: 'allowed_models';
           },
           {
             columns: ['ratings__model_id'];

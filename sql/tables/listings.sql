@@ -1,3 +1,4 @@
+-- DBeaver -> find the table > Generate SQL > DDL
 -- public.listings definition
 -- Drop table
 -- DROP TABLE public.listings;
@@ -26,6 +27,7 @@ CREATE TABLE public.listings(
     safety_rating numeric NULL,
     drivetrain text NULL,
     engine text NULL,
+    last_checked_at timestamptz DEFAULT now() NOT NULL,
     CONSTRAINT listings_found_at_url_key UNIQUE (found_at_url),
     CONSTRAINT listings_pkey PRIMARY KEY (vin)
 );

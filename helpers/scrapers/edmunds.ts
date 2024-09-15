@@ -61,6 +61,7 @@ export async function getEdmundsRatings(searchQuery: string, modelId: number) {
     console.error('Error finding the reviews element:', error);
     return null;
   } finally {
+    await page.close();
     await browser.close();
   }
 }
