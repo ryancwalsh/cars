@@ -10,8 +10,7 @@ module.exports = {
   },
   reactStrictMode: true,
   typescript: {
-    // FIXNOW: Dangerously allowing production builds to successfully complete even if project has type errors.
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: false,
   },
   webpack: (cfg) => {
     cfg.module.rules.push({

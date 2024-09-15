@@ -23,13 +23,14 @@ yarn dev
 
 # TODO
 
+- make an API route that scrapes CarGurus search results and saves to Supabase
+- make a cron job that calls the CarGurus scraper
+- figure out why `ScrapedListing` type is equivalent to `any`
 - add weighted score to Retool webapp
 - add screeshots of Supabase, Retool, etc to this readme
 
 ## Later
 
-- make an API route that scrapes CarGurus search results and doesn't get blocked by their bot detector
-- make a cron job that calls the CarGurus scraper
 - get it working on Vercel (lower priority since I could run this on my local laptop or Digital Ocean)
 - use Retool to create a UI that allows blocking models
 - Autotrader?

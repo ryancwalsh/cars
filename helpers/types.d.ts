@@ -12,11 +12,14 @@ export type FlatJson = Record<string, Primitive>;
 
 export type TableRows<TableName extends keyof Database['public']['Tables']> = Array<Database['public']['Tables'][TableName]['Insert']>;
 
+type Tables = Database['public']['Tables'];
+type ListingsTable = Tables['listings'];
+
 export type ScrapedListing = {
   make: string;
   model: string;
   trim: string;
   year: number;
-} & Database['public']['Tables']['listings']['Row'];
+} & ListingsTable['Row'];
 
 export type ModelIdsMap = { [key: string]: number };

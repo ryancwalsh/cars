@@ -1,12 +1,16 @@
 // `clear && CHROME_PATH=/opt/brave.com/brave/brave SCRAPE_LOGS_PATH=/home/rcwalsh/code/cars/logs BROWSER_USER_DATA_DIRECTORY=/home/rcwalsh/.config/BraveSoftware/Brave-Browser/Default npx tsx helpers/scrapers/carGurus.ts`
 
 /* eslint-disable canonical/id-match */
+import { JSDOM } from 'jsdom';
+
 import { SCRAPE_LOGS_PATH } from '../config';
 import { getChromium } from '../generic/chromium';
 import { type ScrapedListing } from '../types';
 import { saveHtml } from './logging';
 
 const url = `https://www.cargurus.com/Cars/inventorylisting/viewDetailsFilterViewInventoryListing.action?sourceContext=untrackedWithinSite_false_0&distance=25&inventorySearchWidgetType=AUTO&zip=30009&maxAccidents=0&hideSalvage=true&hideFrameDamaged=true&transmissionTypes=AUTOMATIC&hideFleet=true&hideMultipleOwners=true&maxPrice=12000&daysOnMarketMax=7&startYear=2015&hideLemon=true&hideTheft=true&sortDir=ASC&sortType=BEST_MATCH&isDeliveryEnabled=true`;
+
+const listingTileClass = '.pazLTN'; // must match listingTileClassInner
 
 function removeSubstringAtEnd(string: string, substring: string) {
   if (string.endsWith(substring)) {
@@ -24,7 +28,7 @@ function cleanListing(listingElement: Element, listing: ScrapedListing) {
   const priceText = listingElement.querySelector('[data-testid="srp-tile-price"]')?.textContent?.trim().replaceAll(/[$,]/gu, '');
   listing.price_approx = priceText ? Number.parseFloat(priceText) : null;
 
-  listing.location = listingElement.querySelector('[data-testid="srp-tile-location"]')?.textContent?.trim();
+  listing.location = listingElement.querySelector('[data-testid="srp-tile-bucket-text"]')?.textContent?.trim();
 
   const imgElement = listingElement.querySelector('img');
   listing.image_url = imgElement ? imgElement.src : null;
@@ -34,7 +38,7 @@ function cleanListing(listingElement: Element, listing: ScrapedListing) {
 }
 
 // eslint-disable-next-line max-lines-per-function
-function parseListing(listingElement: Element) {
+function parseListing(listingElement: Element): ScrapedListing | null {
   const listing: ScrapedListing = {
     drivetrain: null,
     engine: null,
@@ -126,10 +130,10 @@ function isValidListing(element: Element): boolean {
   return true;
 }
 
-function extractCarListings(listingElements: NodeListOf<Element> | undefined) {
-  const cars = [];
+function extractCarListings(nodeListOfListingElements: Element[] | undefined): ScrapedListing[] {
+  const cars: ScrapedListing[] = [];
 
-  for (const listingElement of listingElements ?? []) {
+  for (const listingElement of nodeListOfListingElements ?? []) {
     if (isValidListing(listingElement)) {
       const car = parseListing(listingElement);
       if (car) {
@@ -141,6 +145,14 @@ function extractCarListings(listingElements: NodeListOf<Element> | undefined) {
   }
 
   return cars;
+}
+
+function getElementFromHtml(html: string, selector: string): Element | null {
+  const dom = new JSDOM(html);
+
+  const element = dom.window.document.querySelector(selector);
+
+  return element;
 }
 
 // eslint-disable-next-line max-lines-per-function
@@ -160,21 +172,29 @@ export async function getLatestCarGurusListings() {
       path: `${SCRAPE_LOGS_PATH}/carGurus_${now}.png`,
     });
 
+    // const localTestFile =''
+    // await page.goto(`file://${localTestFile}`);
+
     // wait for all redirects https://stackoverflow.com/a/57007420/470749
-    const listingsWrapperElement = await page.waitForSelector('#cargurus-listing-search', {
+    await page.waitForSelector('#cargurus-listing-search', {
       timeout: 3_000, // max milliseconds to wait
     });
 
-    console.log('listingsWrapperElement', JSON.stringify(listingsWrapperElement, null, 2));
+    const carGurusListings = await page.evaluate(() => {
+      // Any console logs here will be visible in the browser rather than the terminal.
 
-    const listingElements = await listingsWrapperElement?.evaluate(() => {
-      return document.querySelectorAll('[data-testid="srp-tile-list"] > div.pazLTN');
+      const listingTileClassInner = '.pazLTN'; // Must match listingTileClass
+      const listingSearchElement = document.querySelectorAll('#cargurus-listing-search');
+      console.log({ listingSearchElement });
+      const listingElements = document.querySelectorAll(listingTileClassInner); // #cargurus-listing-search [data-testid="srp-tile-list"] div.pazLTN
+      console.log('Found listing elements:', listingElements);
+      return Array.from(listingElements).map((listingElement) => listingElement.outerHTML);
     });
-
-    console.log('listingElements', JSON.stringify(listingElements, null, 2));
-
-    const listings = extractCarListings(listingElements);
-    console.log({ listings });
+    console.log({ carGurusListings });
+    const elements = carGurusListings.map((carGurusListing) => getElementFromHtml(carGurusListing, listingTileClass)).filter((item) => item !== null);
+    // console.log({ elements });
+    const listings = extractCarListings(elements);
+    console.log('Extracted listings:', listings);
 
     return listings;
   } catch (error) {
@@ -184,5 +204,3 @@ export async function getLatestCarGurusListings() {
     await browser.close();
   }
 }
-
-getLatestCarGurusListings(); // FIXNOW: remove
