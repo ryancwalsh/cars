@@ -12,11 +12,13 @@
       "esnext"
     ],
     "module": "esnext",
-    "moduleResolution": "Bundler",
+    "moduleResolution": "node",
     "noEmit": true,
+    "noImplicitAny": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "strict": true,
+    "strictNullChecks": true,
     "target": "es2020"
   },
   "exclude": [
