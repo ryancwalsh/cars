@@ -45,6 +45,10 @@ SELECT
     ratings.kbb_consumer_rating,
     ratings.kbb_consumer_ratings_count,
     ratings.kbb_expert_rating,
+    ratings.edmunds_rating,
+    ratings.edmunds_ratings_count,
+    ratings.edmunds_repair_pal_reliability_rating,
+    ratings.edmunds_monthly_cost_to_drive_estimate,
     ratings.model_id AS ratings__model_id
 FROM
     listings

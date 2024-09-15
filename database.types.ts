@@ -310,6 +310,10 @@ export type Database = {
         Row: {
           cars_dot_com_rating: number | null;
           cars_dot_com_ratings_count: number | null;
+          edmunds_monthly_cost_to_drive_estimate: number | null;
+          edmunds_rating: number | null;
+          edmunds_ratings_count: number | null;
+          edmunds_repair_pal_reliability_rating: number | null;
           id: number | null;
           kbb_consumer_rating: number | null;
           kbb_consumer_ratings_count: number | null;
@@ -425,6 +429,10 @@ export type Database = {
           concerns: string | null;
           created_at: string | null;
           drivetrain: string | null;
+          edmunds_monthly_cost_to_drive_estimate: number | null;
+          edmunds_rating: number | null;
+          edmunds_ratings_count: number | null;
+          edmunds_repair_pal_reliability_rating: number | null;
           engine: string | null;
           exterior_color: string | null;
           found_at_url: string | null;

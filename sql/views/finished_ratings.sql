@@ -13,7 +13,11 @@ SELECT
     ratings.cars_dot_com_ratings_count,
     ratings.kbb_consumer_rating,
     ratings.kbb_consumer_ratings_count,
-    ratings.kbb_expert_rating
+    ratings.kbb_expert_rating,
+    ratings.edmunds_rating,
+    ratings.edmunds_ratings_count,
+    ratings.edmunds_repair_pal_reliability_rating,
+    ratings.edmunds_monthly_cost_to_drive_estimate
 FROM
     allowed_models
     LEFT JOIN ratings ON allowed_models.id = ratings.model_id

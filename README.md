@@ -25,7 +25,7 @@ yarn dev
 
 1. add weighted score to Retool webapp and document the formula here
 1. make cron jobs that call the CarGurus scraper
-1. make cron job that checks each "active" listing in the check_whether_still_available view to see if it's still available at CarGurus and updates the `listings` row to say when it was last checked (and update to inactive as necessary)
+1. make cron job that checks each "active" listing in the check_whether_still_available view to see if it's still available at CarGurus and updates the `listings` row to say when it was last checked (and update to inactive as necessary or update image)
 1. figure out why `ScrapedListing` type is equivalent to `any`
 1. add screeshots of Supabase, Retool, etc to this readme
 1. use Retool to create a UI that allows blocking models (as a replacement for manual `allowed_models` view)
