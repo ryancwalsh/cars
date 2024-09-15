@@ -28,6 +28,7 @@ export type Database = {
           image_url?: string | null;
           interior_color?: string | null;
           is_active?: boolean;
+          last_checked_at?: string;
           listing_url?: string | null;
           location?: string | null;
           mileage?: number | null;
@@ -84,6 +85,7 @@ export type Database = {
           image_url: string | null;
           interior_color: string | null;
           is_active: boolean;
+          last_checked_at: string;
           listing_url: string | null;
           location: string | null;
           mileage: number | null;
@@ -110,6 +112,7 @@ export type Database = {
           image_url?: string | null;
           interior_color?: string | null;
           is_active?: boolean;
+          last_checked_at?: string;
           listing_url?: string | null;
           location?: string | null;
           mileage?: number | null;
@@ -249,6 +252,30 @@ export type Database = {
       };
     };
     Views: {
+      check_whether_still_available: {
+        Insert: {
+          created_at?: string | null;
+          found_at_url?: string | null;
+          last_checked_at?: string | null;
+          listing_url?: string | null;
+          vin?: string | null;
+        };
+        Relationships: [];
+        Row: {
+          created_at: string | null;
+          found_at_url: string | null;
+          last_checked_at: string | null;
+          listing_url: string | null;
+          vin: string | null;
+        };
+        Update: {
+          created_at?: string | null;
+          found_at_url?: string | null;
+          last_checked_at?: string | null;
+          listing_url?: string | null;
+          vin?: string | null;
+        };
+      };
       finished_ratings: {
         Relationships: [];
         Row: {
