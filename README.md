@@ -23,17 +23,19 @@ yarn dev
 
 # TODO
 
-- make cron jobs that call the CarGurus scraper and the pages/api/ratings/determineMissing.ts
-- figure out why `ScrapedListing` type is equivalent to `any`
-- add weighted score to Retool webapp
-- add screeshots of Supabase, Retool, etc to this readme
+1. update `missing_ratings` view to only care about active listings
+1. make cron jobs that call the CarGurus scraper and the pages/api/ratings/determineMissing.ts
+1. make cron job that checks each "active" listing in the table that hasn't been checked in X hours to see if it's still available at CarGurus and updates the row to say when it was last checked (and update to inactive as necessary)
+1. figure out why `ScrapedListing` type is equivalent to `any`
+1. add weighted score to Retool webapp and document the formula here
+1. add screeshots of Supabase, Retool, etc to this readme
+1. use Retool to create a UI that allows blocking models
 
 ## Later
 
-- get it working on Vercel (lower priority since I could run this on my local laptop or Digital Ocean)
-- use Retool to create a UI that allows blocking models
-- Autotrader?
 - make Retool mobile app at https://rcwalsh.retool.com/mobile/editor/Cars%20mobile
+- Autotrader?
+- get it working on Vercel (lower priority since I could run this on my local laptop or Digital Ocean)
 
 # Notes
 

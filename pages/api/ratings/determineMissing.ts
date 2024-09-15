@@ -30,7 +30,8 @@ export default async function handler(request: NextApiRequest, response: NextApi
   console.log({ rows }, rows?.length);
 
   if (rows) {
-    const { modelId, site, searchQuery } = getQueryParameters(rows[0]);
+    const firstRow = rows[0];
+    const { modelId, site, searchQuery } = getQueryParameters(firstRow);
     // For just the first model that is missing ratings from at least one site, fetch the ratings from just the first site.
     await fetchRatings(site, searchQuery, modelId as number);
   }
