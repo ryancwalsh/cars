@@ -1,8 +1,10 @@
+// eslint-disable-next-line max-lines-per-function
 function calculateWeightedRating(row) {
     // Default weight if count is null
     const defaultCount = 30;
-    const reliabilityWeight = 40;
-    const kbbExpertRatingWeight = 40;
+    const reliabilityWeight = 100;
+    const kbbExpertRatingWeight = 100;
+    const safetyRatingWeight = 100;
 
     // Extract ratings and counts from the row
     const {
@@ -13,7 +15,8 @@ function calculateWeightedRating(row) {
         kbb_expert_rating,
         edmunds_rating,
         edmunds_ratings_count,
-        edmunds_repair_pal_reliability_rating
+        edmunds_repair_pal_reliability_rating,
+        safety_rating
     } = row;
 
     const getCount = (count) => count ?? defaultCount;
@@ -28,10 +31,11 @@ function calculateWeightedRating(row) {
     const weightedKbbExpertRating = kbb_expert_rating * kbbExpertRatingWeight;
     const weightedEdmundsRating = edmunds_rating * edmundsWeight;
     const weightedReliabilityRating = edmunds_repair_pal_reliability_rating * reliabilityWeight;
+    const weightedSafetyRating = safety_rating * safetyRatingWeight;
 
-    const totalWeight = carsWeight + kbbWeight + kbbExpertRatingWeight + edmundsWeight + reliabilityWeight;
+    const totalWeight = carsWeight + kbbWeight + kbbExpertRatingWeight + edmundsWeight + reliabilityWeight + safetyRatingWeight;
 
-    const weightedSum = weightedCarsRating + weightedKbbConsumerRating + weightedKbbExpertRating + weightedEdmundsRating + weightedReliabilityRating;
+    const weightedSum = weightedCarsRating + weightedKbbConsumerRating + weightedKbbExpertRating + weightedEdmundsRating + weightedReliabilityRating + weightedSafetyRating;
 
     const weightedRating = weightedSum / totalWeight;
 
