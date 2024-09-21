@@ -1,19 +1,13 @@
 // `clear && yarn tsx helpers/cron_jobs/determineMissingLooper.ts`
 
 import { determineMissing } from '../determineMissing';
+import { sleep } from '../generic/chromium';
 
 // Utility function to generate a random delay between a given min and max (in milliseconds)
 function getRandomDelay(minSeconds: number, maxSeconds: number): number {
   const minMs = minSeconds * 1_000;
   const maxMs = maxSeconds * 1_000;
   return Math.floor(Math.random() * (maxMs - minMs + 1)) + minMs;
-}
-
-// Helper to sleep for a specified number of milliseconds
-async function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => {
-    setTimeout(resolve, ms);
-  });
 }
 
 // Main function to manage the repeated calls

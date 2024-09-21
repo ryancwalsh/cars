@@ -8,7 +8,7 @@ function getSafeString(input: string): string {
   return input.replaceAll(/[^a-z\d]/giu, '_');
 }
 
-export async function saveHtml(page: Page, url: string, searchQuery: string): Promise<string> {
+export async function saveHtml(page: Page, url: string, searchQuery?: string): Promise<string> {
   const currentUrl = page.url();
   console.log({ currentUrl });
   if (SCRAPE_LOGS_PATH) {

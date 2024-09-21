@@ -54,3 +54,9 @@ export async function closeAllTabsExceptMostRecent(browser: Browser) {
     await page.close();
   }
 }
+
+export async function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}

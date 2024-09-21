@@ -10,7 +10,7 @@ import { getNumberWithinString } from '../generic/numbers';
 import { type ScrapedListing } from '../types';
 import { saveHtml } from './logging';
 
-const url = `https://www.cargurus.com/Cars/inventorylisting/viewDetailsFilterViewInventoryListing.action?sourceContext=untrackedWithinSite_false_0&distance=25&inventorySearchWidgetType=AUTO&zip=30009&maxAccidents=0&hideSalvage=true&hideFrameDamaged=true&transmissionTypes=AUTOMATIC&hideFleet=true&hideMultipleOwners=true&maxPrice=12000&daysOnMarketMax=7&startYear=2015&hideLemon=true&hideTheft=true&sortDir=ASC&sortType=BEST_MATCH&isDeliveryEnabled=true`;
+const url = `https://www.cargurus.com/Cars/inventorylisting/viewDetailsFilterViewInventoryListing.action?sourceContext=untrackedWithinSite_false_0&distance=25&inventorySearchWidgetType=AUTO&zip=30009&maxAccidents=0&hideSalvage=true&hideFrameDamaged=true&transmissionTypes=AUTOMATIC&hideFleet=true&hideMultipleOwners=true&maxPrice=12000&daysOnMarketMax=7&startYear=2015&hideLemon=true&hideTheft=true&sortDir=ASC&sortType=BEST_MATCH&isDeliveryEnabled=true`; // #resultsPage=2
 
 // const url = `https://www.example.com`;
 
@@ -199,7 +199,7 @@ export async function getLatestCarGurusListings() {
     // console.log({ elements });
     const listings = extractCarListings(elements);
     console.log('Extracted listings:', listings);
-    console.log('helpers/scrapers/carGurus.ts finished.');
+    console.log('helpers/scrapers/carGurus.ts finished.', listings.length);
     return listings;
   } catch (error) {
     console.error('Error finding the listings:', error);
