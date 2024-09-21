@@ -1,3 +1,4 @@
+// `clear && yarn tsx helpers/cron_jobs/addNewListings.ts`
 // `clear && CHROME_PATH=/opt/brave.com/brave/brave SCRAPE_LOGS_PATH=/home/rcwalsh/code/cars/logs BROWSER_USER_DATA_DIRECTORY=/home/rcwalsh/.config/BraveSoftware/Brave-Browser/Default npx tsx helpers/scrapers/carGurus.ts`
 
 /* eslint-disable canonical/id-match */
@@ -5,6 +6,7 @@ import { JSDOM } from 'jsdom';
 
 import { SCRAPE_LOGS_PATH } from '../config';
 import { getChromium } from '../generic/chromium';
+import { getNumberWithinString } from '../generic/numbers';
 import { type ScrapedListing } from '../types';
 import { saveHtml } from './logging';
 
@@ -36,7 +38,7 @@ function cleanListing(listingElement: Element, listing: ScrapedListing) {
   listing.image_url = imgElement ? imgElement.src : null;
 
   const listingLink = listingElement.querySelector('a[data-testid="car-blade-link"]');
-  listing.found_at_url = listingLink ? `https://www.cargurus.com/Cars/inventorylisting/viewDetailsFilterViewInventoryListing.action${listingLink.getAttribute('href')}` : null;
+  listing.found_at_url = listingLink ? `https://www.cargurus.com/Cars/link/${getNumberWithinString(listingLink.getAttribute('href'))}` : null;
 }
 
 // eslint-disable-next-line max-lines-per-function
