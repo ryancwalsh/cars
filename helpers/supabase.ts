@@ -5,6 +5,8 @@ import { SUPABASE_ANON_KEY, SUPABASE_URL } from './config';
 import { getUniqueObjects } from './generic/arrays';
 import { type TableRows } from './types';
 
+console.log('supabase helper', { SUPABASE_URL });
+
 export const supabaseClient = createClient<Database>(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 /**

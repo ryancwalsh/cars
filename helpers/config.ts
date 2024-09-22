@@ -1,11 +1,13 @@
 /* eslint-disable n/no-process-env */
 
-import dotenv from 'dotenv';
+import { config } from 'dotenv';
+
+// TODO: Install and use `envalid`.
 
 // Only call dotenv.config() when not in Next.js (check if process.env.NEXT_PUBLIC variable exists)
-if (!process.env.NEXT_PUBLIC_ENV) {
+if (!process.env.NODE_ENV) {
   console.log('Loading environment variables from .env.local file');
-  const result = dotenv.config({ path: '.env.local' });
+  const result = config({ path: '.env.local' });
 
   if (result.error) {
     console.error('Error loading .env.local file:', result.error);
@@ -15,6 +17,7 @@ if (!process.env.NEXT_PUBLIC_ENV) {
 }
 
 export const SUPABASE_URL = process.env.SUPABASE_URL ?? '';
+console.log('config', { SUPABASE_URL });
 export const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY ?? '';
 export const CHROME_PATH = process.env.CHROME_PATH ?? '';
 /**
