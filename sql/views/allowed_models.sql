@@ -57,7 +57,22 @@ FROM (
 ) LIKE '%subaru_forester%'
             OR LOWER(
                 lowercase_hash
-) LIKE '%nissan_murano%' THEN
+) LIKE '%nissan_murano%'
+            OR LOWER(
+                lowercase_hash
+) LIKE '%cargo_van%'
+            OR LOWER(
+                lowercase_hash
+) LIKE '%chevrolet_silverado%'
+            OR LOWER(
+                lowercase_hash
+) LIKE '%chevrolet_colorado%'
+            OR LOWER(
+                lowercase_hash
+) LIKE '%ford_mustang%'
+            OR LOWER(
+                make
+) LIKE '%ram%' THEN
             FALSE
         ELSE
             TRUE

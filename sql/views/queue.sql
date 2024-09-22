@@ -59,6 +59,7 @@ WHERE
     listings.is_active = TRUE
     AND LOWER(
         body_type) != 'pickup truck'
+    AND LOWER(body_type) != 'coupe'
 ORDER BY
     listings.created_at ASC;
 
