@@ -1,8 +1,9 @@
 /* eslint-disable canonical/id-match */
 
-import { getChromium } from '../generic/chromium';
+import { SCRAPE_LOGS_PATH } from '../config';
+import { getChromium, sleep } from '../generic/chromium';
 import { type ScrapedListing } from '../types';
-import { saveHtml } from './logging';
+import { getSafeString, saveHtml } from './logging';
 
 // eslint-disable-next-line max-lines-per-function
 export async function getLatestCarGurusListing(url: string): Promise<Partial<ScrapedListing> | null> {
@@ -12,32 +13,30 @@ export async function getLatestCarGurusListing(url: string): Promise<Partial<Scr
       waitUntil: 'networkidle0',
     });
     console.log(`visited ${url}`);
-
+    await sleep(2_500);
     await saveHtml(page, url);
 
-    // await page.screenshot({
-    //   path: `${SCRAPE_LOGS_PATH}/carGurus_${url}_${now}.png`,
-    // });
+    const now = new Date().toISOString();
+    await page.screenshot({
+      path: `${SCRAPE_LOGS_PATH}/carGurus_${now}_${getSafeString(url)}.png`,
+    });
 
     const mainPhotoSelector = '[alt="Vehicle Full Photo"]';
+    const alternativePhotoSelector = '[alt="Preparing for a close up..."]';
     const listingNotAvailableHeaderSelector = '.cg-listingNotAvailableHeader';
+    const jointSelector = `${mainPhotoSelector}, ${listingNotAvailableHeaderSelector}, ${alternativePhotoSelector}`;
+    console.log(`Looking for joint selector: ${jointSelector}`);
 
-    // wait for all redirects https://stackoverflow.com/a/57007420/470749
-    await page.waitForSelector(`${mainPhotoSelector}, ${listingNotAvailableHeaderSelector}`, {
+    // wait for all redirects https://stackoverflow.com/a/57007420/470749 https://pptr.dev/api/puppeteer.page.waitforselector/
+    const elementHandle = await page.waitForSelector(jointSelector, {
       timeout: 3_000, // max milliseconds to wait
     });
-    console.log('found joint selector.');
+    console.log({ elementHandle });
+    const imageUrl = await page.evaluate((element) => element?.getAttribute('src'), elementHandle);
+    console.log(`Found joint selector: ${jointSelector}`, elementHandle, imageUrl);
 
-    const result = await page.evaluate(() => {
-      // Any console logs here will be visible in the browser rather than the terminal.
-      const mainPhotoSelectorInside = '[alt="Vehicle Full Photo"]'; // TODO: Reduce duplication with `mainPhotoSelector`.
-      const imageElement = document.querySelector(mainPhotoSelectorInside);
-      console.log({ imageElement });
+    const result: Partial<ScrapedListing> | null = imageUrl ? { image_url: imageUrl } : null;
 
-      const partialListing: Partial<ScrapedListing> | null = imageElement ? { image_url: imageElement.getAttribute('src') } : null;
-
-      return partialListing;
-    });
     console.log({ result });
 
     return result;

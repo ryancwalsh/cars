@@ -29,6 +29,7 @@ SELECT
     listings.transmission,
     listings.vin,
     listings.vin_report_url,
+    listings.last_checked_at,
     allowed_models.id AS models__id,
     allowed_models.back_seat_folds_flat,
     allowed_models.concern,

@@ -12,7 +12,7 @@ import { supabaseClient } from '../supabase';
  */
 async function check() {
   const yesterday = dayjs().subtract(1, 'day').startOf('day').toISOString();
-  const { data: rows } = await supabaseClient.from<'queue', Database['public']['Views']['queue']>('queue').select().lte('created_at', yesterday);
+  const { data: rows } = await supabaseClient.from<'queue', Database['public']['Views']['queue']>('queue').select().lte('last_checked_at', yesterday);
 
   console.log({ rows }, rows?.length);
 
@@ -41,7 +41,7 @@ async function check() {
           console.error(error);
         }
 
-        await sleep(9_000);
+        await sleep(7_000);
       }
 
       counter += 1;

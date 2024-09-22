@@ -281,30 +281,6 @@ export type Database = {
           year: number | null;
         };
       };
-      check_whether_still_available: {
-        Insert: {
-          created_at?: string | null;
-          found_at_url?: string | null;
-          last_checked_at?: string | null;
-          listing_url?: string | null;
-          vin?: string | null;
-        };
-        Relationships: [];
-        Row: {
-          created_at: string | null;
-          found_at_url: string | null;
-          last_checked_at: string | null;
-          listing_url: string | null;
-          vin: string | null;
-        };
-        Update: {
-          created_at?: string | null;
-          found_at_url?: string | null;
-          last_checked_at?: string | null;
-          listing_url?: string | null;
-          vin?: string | null;
-        };
-      };
       finished_ratings: {
         Relationships: [];
         Row: {
@@ -443,6 +419,7 @@ export type Database = {
           kbb_consumer_rating: number | null;
           kbb_consumer_ratings_count: number | null;
           kbb_expert_rating: number | null;
+          last_checked_at: string | null;
           listing_url: string | null;
           location: string | null;
           lowercase_hash: string | null;

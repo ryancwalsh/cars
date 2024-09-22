@@ -23,7 +23,6 @@ yarn dev
 
 # TODO
 
-1. improve reliability of checkWhetherStillAvailableLooper
 1. make a mobile-responsive Next.js page that allows viewing and editing the queue
 1. handle CarGurus pagination to allow getting listings older than 7 days
 1. edit Retool mobile app at https://rcwalsh.retool.com/mobile/editor/Cars%20mobile to

@@ -4,7 +4,7 @@ import { type Page } from 'puppeteer';
 
 import { SCRAPE_LOGS_PATH } from '../config';
 
-function getSafeString(input: string): string {
+export function getSafeString(input: string): string {
   return input.replaceAll(/[^a-z\d]/giu, '_');
 }
 
