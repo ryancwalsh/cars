@@ -24,62 +24,15 @@ FROM (
         note,
         concern,
         lowercase_hash,
-        CASE WHEN LOWER(
-            make
-) IN (
-            'alfa romeo', 'audi', 'bmw', 'fiat', 'jeep', 'kia', 'mercedes', 'porsche', 'sentra', 'volkswagen'
-)
-            OR LOWER(
-                CONCAT(
-                    "year", '_', LOWER(
-                        make
-), '_', LOWER(
-                        model
-)
-)
-) IN (
-                '2012_toyota_camry', '2014_toyota_camry', '2015_hyundai_sonata', '2016_hyundai_sonata', '2016_nissan_pathfinder', '2017_hyundai_sonata', '2018_ford_escape', '2018_hyundai_sonata', '2018_toyota_camry', '2019_hyundai_sonata', '2020_nissan_pathfinder'
-)
-            OR LOWER(
-                lowercase_hash
-) LIKE '%dodge_challenger%'
-            OR LOWER(
-                lowercase_hash
-) LIKE '%dodge_charger%'
-            OR LOWER(
-                lowercase_hash
-) LIKE '%ford_f-150%'
-            OR LOWER(
-                model
-) = 'transit cargo'
-            OR LOWER(
-                lowercase_hash
-) LIKE '%subaru_forester%'
-            OR LOWER(
-                lowercase_hash
-) LIKE '%nissan_murano%'
-            OR LOWER(
-                lowercase_hash
-) LIKE '%cargo_van%'
-            OR LOWER(
-                lowercase_hash
-) LIKE '%chevrolet_silverado%'
-            OR LOWER(
-                lowercase_hash
-) LIKE '%chevrolet_colorado%'
-            OR LOWER(
-                lowercase_hash
-) LIKE '%ford_mustang%'
-            OR LOWER(
-                lowercase_hash
-) LIKE '%dodge_ram%'
-            OR is_active = FALSE THEN
+        CASE WHEN e.pattern IS NOT NULL -- A match was found in exclusions
+            OR m.is_active = FALSE THEN
             FALSE
         ELSE
             TRUE
         END AS allowed
     FROM
-        public.models
+        public.models m
+        LEFT JOIN public.exclusions e ON m.lowercase_hash LIKE e.pattern -- Pattern matching
 ) AS inner_query
 WHERE
     allowed = TRUE;
