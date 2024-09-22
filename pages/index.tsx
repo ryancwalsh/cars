@@ -24,24 +24,22 @@ export default function Index() {
     return <p className="text-center">Loading...</p>;
   } else {
     return (
-      <div className="container mx-auto p-4">
+      <div className="mx-auto p-4">
         <h1 className="text-2xl font-bold text-center mb-4">{listings?.length} Car Listings</h1>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
           {listings &&
             listings.map((listing) => (
-              <div className="bg-white shadow-lg rounded-lg overflow-hidden" key={listing.vin}>
-                <img alt={listing.model ?? 'Car Image'} className="w-full h-48 object-cover" src={listing.image_url ?? '/default-car-image.jpg'} />
+              <div className="bg-white shadow-lg border rounded-lg overflow-hidden" key={listing.vin}>
+                <a className="block mt-4 text-blue-500 hover:underline" href={listing.listing_url as string} rel="noopener noreferrer" target="_blank">
+                  <img alt={listing.model ?? 'Car Image'} className="w-full h-48 object-cover" src={listing.image_url ?? '/default-car-image.jpg'} />
+                </a>
                 <div className="p-4">
                   <h2 className="text-lg font-bold mb-2">
                     {listing.year} {listing.make} {listing.model} {listing.trim}
                   </h2>
-                  <p className="text-gray-600">{listing.body_type}</p>
-                  <p className="text-gray-600">Mileage: {listing.mileage?.toLocaleString() ?? 'N/A'} miles</p>
-                  <p className="text-gray-600">Price: ${listing.price_approx?.toLocaleString() ?? 'N/A'}</p>
-                  <p className="text-gray-600">Location: {listing.location}</p>
-                  <a className="block mt-4 text-blue-500 hover:underline" href={listing.listing_url as string} rel="noopener noreferrer" target="_blank">
-                    View Listing
-                  </a>
+                  <p className="text-gray-600">${listing.price_approx?.toLocaleString() ?? 'N/A'}</p>
+                  <p className="text-gray-600">{listing.mileage?.toLocaleString() ?? 'N/A'} miles</p>
+                  <p className="text-gray-600">{listing.location}</p>
                 </div>
               </div>
             ))}
