@@ -12,6 +12,7 @@ CREATE TABLE public.models(
     note text NULL,
     concern text NULL,
     lowercase_hash text NOT NULL,
+    is_active bool DEFAULT TRUE NOT NULL,
     CONSTRAINT models_lowercase_hash_key UNIQUE (lowercase_hash),
     CONSTRAINT models_pkey PRIMARY KEY (id)
 );

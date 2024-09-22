@@ -71,8 +71,9 @@ FROM (
                 lowercase_hash
 ) LIKE '%ford_mustang%'
             OR LOWER(
-                make
-) LIKE '%ram%' THEN
+                lowercase_hash
+) LIKE '%dodge_ram%'
+            OR is_active = FALSE THEN
             FALSE
         ELSE
             TRUE
