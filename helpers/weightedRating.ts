@@ -60,15 +60,66 @@ export function calculateWeightedRating(row: Queue['Row']): number | null {
   }
 }
 
+function calculateWeightedScore(items: Array<{ value: number; weight: number }>): number {
+  let totalWeight = 0;
+  let weightedSum = 0;
+
+  for (const item of items) {
+    weightedSum += item.value * item.weight;
+    totalWeight += item.weight;
+  }
+
+  if (totalWeight === 0) {
+    throw new Error('Total weight cannot be zero.');
+  }
+
+  // Return the weighted average score
+  return weightedSum / totalWeight;
+}
+
+/**
+ * Converts a `pricePerRemainingMiles` input (such as $0.10) to a 1-5 scale, where cheaper is better, so $0 would be a 5, and high values like $0.17 get a 1.
+ * pricePerRemainingMiles tends to be $0.06 to $0.17 if milesExpected = 250k.
+ */
+function getPricePerRemainingMilesScore(pricePerRemainingMiles: number, max = 0.17): number {
+  // Ensure input is non-negative and clamp values above 0.17
+  const clampedInput = Math.min(Math.max(pricePerRemainingMiles, 0), max);
+
+  // Map input from the range [0, 0.17] to [5, 1]
+  const score = 5 - (clampedInput / max) * 4;
+
+  const pprmScore = Number(score.toFixed(2));
+
+  return pprmScore;
+}
+
+function getScore(weightedRating: number | null, pricePerRemainingMiles: number | null): number | null {
+  if (pricePerRemainingMiles && weightedRating) {
+    const pprmScore = getPricePerRemainingMilesScore(pricePerRemainingMiles);
+    return Number(
+      calculateWeightedScore([
+        { value: pprmScore, weight: 0.1 },
+        { value: weightedRating, weight: 0.9 },
+      ]).toFixed(2),
+    );
+  } else {
+    return null;
+  }
+}
+
 export function getListingsWithWeightedRatings(listings: Array<Queue['Row']>) {
   return listings
     .map((row) => {
       const weightedRating = calculateWeightedRating(row);
+      const pricePerRemainingMiles = row.price_approx && row.mileage ? row.price_approx / (milesExpected - row.mileage) : null;
+      const score = getScore(weightedRating, pricePerRemainingMiles);
+
       return {
         ...row,
-        pricePerRemainingMiles: row.price_approx && row.mileage ? row.price_approx / (milesExpected - row.mileage) : null,
+        pricePerRemainingMiles,
+        score,
         weightedRating,
       };
     })
-    .sort((a, b) => (b.weightedRating ?? 0) - (a.weightedRating ?? 0));
+    .sort((a, b) => (b.score ?? 0) - (a.score ?? 0));
 }
