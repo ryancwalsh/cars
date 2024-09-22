@@ -1,8 +1,8 @@
 import { createClient } from '@supabase/supabase-js';
+import uniqBy from 'lodash/uniqBy';
 
 import { type Database } from '../database.types';
 import { SUPABASE_ANON_KEY, SUPABASE_URL } from './config';
-import { getUniqueObjects } from './generic/arrays';
 import { type TableRows } from './types';
 
 console.log('supabase helper', { SUPABASE_URL });
@@ -13,7 +13,7 @@ export const supabaseClient = createClient<Database>(SUPABASE_URL, SUPABASE_ANON
  * https://supabase.com/docs/reference/javascript/upsert
  */
 export async function upsertModels(records: TableRows<'models'>) {
-  const uniqueRecords = getUniqueObjects(records);
+  const uniqueRecords = uniqBy(records, (item) => item.lowercase_hash);
   // console.log({ uniqueRecords });
   const onConflict = 'lowercase_hash';
   console.log({ onConflict });
@@ -38,27 +38,28 @@ export async function upsertModels(records: TableRows<'models'>) {
 /**
  * https://supabase.com/docs/reference/javascript/upsert
  */
-export async function upsertListings(records: TableRows<'listings'>) {
-  const uniqueRecords = getUniqueObjects(records);
+export async function upsertListings(records: TableRows<'listings'>): Promise<void> {
+  const uniqueRecords = uniqBy(records, (item) => item.vin);
   // console.log({ uniqueRecords });
   const onConflict = 'vin';
   console.log({ onConflict });
-  const { data: upsertData, error: upsertError } = await supabaseClient.from<'listings', Database['public']['Tables']['listings']>('listings').upsert(uniqueRecords, {
+  const { error: upsertError } = await supabaseClient.from<'listings', Database['public']['Tables']['listings']>('listings').upsert(uniqueRecords, {
     ignoreDuplicates: true, // If true, duplicate rows are ignored. If false, duplicate rows are merged with existing rows.
     onConflict, // Comma-separated UNIQUE column(s) to specify how duplicate rows are determined. Two rows are duplicates if all the onConflict columns are equal.
   });
 
-  const { data: matchingRecords, error: selectError } = await supabaseClient
-    .from<'listings', Database['public']['Tables']['listings']>('listings')
-    .select()
-    .in(
-      'vin',
-      uniqueRecords.map((record) => record.vin),
-    );
-
-  console.log({ matchingRecords, selectError, upsertData, upsertError });
-
-  return { matchingRecords, upsertError };
+  // const { data: matchingRecords, error: selectError } = await supabaseClient
+  //   .from<'listings', Database['public']['Tables']['listings']>('listings')
+  //   .select()
+  //   .in(
+  //     'vin',
+  //     uniqueRecords.map((record) => record.vin),
+  //   );
+  if (upsertError) {
+    console.error('upsertListings', { uniqueRecords, upsertError });
+  } else {
+    console.log('upsertListings finished.');
+  }
 }
 
 /**

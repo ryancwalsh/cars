@@ -15,7 +15,7 @@ function getLowercaseHash(listing: ScrapedListing): string {
   return `${listing.year}_${listing.make}_${listing.model}_${listing.trim}`.toLowerCase();
 }
 
-function getModelsFromListings(listings: ScrapedListing[]) {
+function getModelsFromListings(listings: ScrapedListing[]): ModelInsertT[] {
   return listings.map((listing) => {
     const modelToInsert: ModelInsertT = {
       lowercase_hash: getLowercaseHash(listing),
@@ -51,7 +51,7 @@ export async function addNewListings() {
 
   const models = getModelsFromListings(listings);
 
-  console.log({ models });
+  // console.log({ models });
 
   // TODO: Figure out why the type of `modelsResult` is `{    matchingRecords: GenericStringError[] | null;    upsertError: PostgrestError | null;}`
   const modelsResult = await upsertModels(models);
@@ -66,10 +66,14 @@ export async function addNewListings() {
 
   console.log({ modelIdsMap });
 
-  const listingsToInsert = getListingsWithModelIds(listings, modelIdsMap);
-  console.log({ listingsToInsert });
+  const listingsWithMissingVin = listings?.filter((listing) => listing.vin === null);
+  if (listingsWithMissingVin && listingsWithMissingVin.length > 0) {
+    console.error({ listingsWithMissingVin }, listingsWithMissingVin.length);
+    console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`');
+  }
 
-  const result = await upsertListings(listingsToInsert);
+  const listingsToInsert = getListingsWithModelIds(listings, modelIdsMap).filter((listing) => listing.vin !== null);
+  console.log('listingsToInsert.length', listingsToInsert.length);
 
-  console.log({ result });
+  await upsertListings(listingsToInsert);
 }

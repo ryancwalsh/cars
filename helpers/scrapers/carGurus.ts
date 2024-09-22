@@ -24,7 +24,7 @@ function removeSubstringAtEnd(string: string, substring: string) {
   return string;
 }
 
-function cleanListing(listingElement: Element, listing: ScrapedListing) {
+function cleanListing(listingElement: Element, listing: ScrapedListing): void {
   const title = listingElement.querySelector('h4')?.textContent?.trim() ?? '';
   const titleBeforeTrim = `${listing.year} ${listing.make} ${listing.model}`;
   listing.trim = title.replace(titleBeforeTrim, '').trim();
@@ -32,36 +32,18 @@ function cleanListing(listingElement: Element, listing: ScrapedListing) {
   const priceText = listingElement.querySelector('[data-testid="srp-tile-price"]')?.textContent?.trim().replaceAll(/[$,]/gu, '');
   listing.price_approx = priceText ? Number.parseFloat(priceText) : null;
 
-  listing.location = listingElement.querySelector('[data-testid="srp-tile-bucket-text"]')?.textContent?.trim();
+  listing.location = listingElement.querySelector('[data-testid="srp-tile-bucket-text"]')?.textContent?.trim() ?? null;
 
   const imgElement = listingElement.querySelector('img');
   listing.image_url = imgElement ? imgElement.src : null;
 
   const listingLink = listingElement.querySelector('a[data-testid="car-blade-link"]');
-  listing.found_at_url = listingLink ? `https://www.cargurus.com/Cars/link/${getNumberWithinString(listingLink.getAttribute('href'))}` : null;
+  listing.found_at_url = listingLink ? `https://www.cargurus.com/Cars/link/${getNumberWithinString(listingLink.getAttribute('href'))}` : 'error';
 }
 
 // eslint-disable-next-line max-lines-per-function
 function parseListing(listingElement: Element): ScrapedListing | null {
-  const listing: ScrapedListing = {
-    drivetrain: null,
-    engine: null,
-    exterior_color: null,
-    found_at_url: null,
-    fuel_type: null,
-    image_url: null,
-    interior_color: null,
-    location: null,
-    make: null,
-    mileage: null,
-    model: null,
-    price_approx: null,
-    safety_rating: null,
-    transmission: null,
-    trim: null,
-    vin: null,
-    year: null,
-  };
+  const listing = {} as ScrapedListing;
   const dtElements = listingElement.querySelectorAll('dt');
 
   const ddElements = listingElement.querySelectorAll('dd');
@@ -118,7 +100,7 @@ function parseListing(listingElement: Element): ScrapedListing | null {
   }
 
   cleanListing(listingElement, listing);
-  console.log('after cleaning', { listing });
+  // console.log('after cleaning', { listing });
 
   return listing;
 }
@@ -160,7 +142,7 @@ function getElementFromHtml(html: string, selector: string): Element | null {
 }
 
 // eslint-disable-next-line max-lines-per-function
-export async function getLatestCarGurusListings() {
+export async function getLatestCarGurusListings(): Promise<ScrapedListing[]> {
   const { browser, page } = await getChromium();
   try {
     await page.goto(url, {
@@ -187,23 +169,23 @@ export async function getLatestCarGurusListings() {
     const carGurusListings = await page.evaluate(() => {
       // Any console logs here will be visible in the browser rather than the terminal.
 
-      const listingTileClassInner = '.pazLTN'; // Must match listingTileClass
+      const listingTileClassInner = '[data-testid="srp-tile-list"] .pazLTN'; // Must match listingTileClass
       const listingSearchElement = document.querySelectorAll('#cargurus-listing-search');
       console.log({ listingSearchElement });
       const listingElements = document.querySelectorAll(listingTileClassInner); // #cargurus-listing-search [data-testid="srp-tile-list"] div.pazLTN
       console.log('Found listing elements:', listingElements);
       return Array.from(listingElements).map((listingElement) => listingElement.outerHTML);
     });
-    console.log({ carGurusListings });
+    // console.log({ carGurusListings });
     const elements = carGurusListings.map((carGurusListing) => getElementFromHtml(carGurusListing, listingTileClass)).filter((item) => item !== null);
     // console.log({ elements });
     const listings = extractCarListings(elements);
-    console.log('Extracted listings:', listings);
+    // console.log('Extracted listings:', listings);
     console.log('helpers/scrapers/carGurus.ts finished.', listings.length);
     return listings;
   } catch (error) {
     console.error('Error finding the listings:', error);
-    return null;
+    return [];
   } finally {
     await page.close();
     await browser.close();
