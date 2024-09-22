@@ -7,6 +7,7 @@ const defaultCount = 30;
 const reliabilityWeight = 100;
 const kbbExpertRatingWeight = 100;
 const safetyRatingWeight = 100;
+export const milesExpected = 250_000;
 
 function getCount(count: number | null | undefined): number {
   return count ?? defaultCount;
@@ -63,7 +64,11 @@ export function getListingsWithWeightedRatings(listings: Array<Queue['Row']>) {
   return listings
     .map((row) => {
       const weightedRating = calculateWeightedRating(row);
-      return { ...row, weightedRating };
+      return {
+        ...row,
+        pricePerRemainingMiles: row.price_approx && row.mileage ? row.price_approx / (milesExpected - row.mileage) : null,
+        weightedRating,
+      };
     })
     .sort((a, b) => (b.weightedRating ?? 0) - (a.weightedRating ?? 0));
 }
