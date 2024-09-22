@@ -57,6 +57,8 @@ FROM
     LEFT JOIN ratings ON allowed_models.id = ratings.model_id
 WHERE
     listings.is_active = TRUE
+    AND LOWER(
+        body_type) != 'pickup truck'
 ORDER BY
     listings.created_at ASC;
 

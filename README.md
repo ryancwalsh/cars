@@ -74,3 +74,7 @@ username: postgres.yzvxivcshrizfccwujzp
 password: {in Bitwarden}
 
 https://supabase.com/dashboard/project/yzvxivcshrizfccwujzp/settings/database
+
+# Deployment
+
+Is automatic to https://cars-walsh.vercel.app/ upon push of `main` branch to GitHub.
