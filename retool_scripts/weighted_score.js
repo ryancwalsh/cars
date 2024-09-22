@@ -1,3 +1,7 @@
+
+/**
+ * @deprecated See `helpers/weightedRating.ts`
+ */
 // eslint-disable-next-line max-lines-per-function
 function calculateWeightedRating(row) {
     // Default weight if count is null
