@@ -26,7 +26,10 @@ function getQueryParameters(row: Database['public']['Views']['missing_ratings'][
   return queryParameters;
 }
 
-export async function determineMissing() {
+/**
+ * Finds the first row of the missing_ratings view and fetches the ratings for the first type of ratings that are missing.
+ */
+export async function scrapeRatingsForNextListing() {
   /**
    * https://stackoverflow.com/a/72091477/470749
    * https://github.com/PostgREST/postgrest/discussions/2014#discussioncomment-1598919
@@ -43,7 +46,7 @@ export async function determineMissing() {
     await fetchRatings(site, searchQuery, modelId as number);
   }
 
-  console.log('determineMissing finished.');
+  console.log('scrapeRatingsForNextListing finished.');
 
   return rows ? rows.length : 0;
 }

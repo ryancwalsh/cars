@@ -1,7 +1,7 @@
-// `clear && yarn tsx helpers/cron_jobs/determineMissingLooper.ts`
+// `clear && yarn tsx helpers/cron_jobs/scrapeAllMissingRatings.ts`
 
-import { determineMissing } from '../determineMissing';
 import { sleep } from '../generic/chromium';
+import { scrapeRatingsForNextListing } from '../scrapeRatingsForNextListing';
 
 // Utility function to generate a random delay between a given min and max (in milliseconds)
 function getRandomDelay(minSeconds: number, maxSeconds: number): number {
@@ -18,7 +18,7 @@ async function executeWithRandomIntervals(): Promise<void> {
 
   while (true) {
     try {
-      const rowsRemaining = await determineMissing();
+      const rowsRemaining = await scrapeRatingsForNextListing();
       console.log({ rowsRemaining });
       const delayMs = rowsRemaining === 0 ? SLOW_DELAY_MS : getRandomDelay(MIN_DELAY_SECONDS, MAX_DELAY_SECONDS);
       console.log(`[${new Date().toISOString()}] Waiting for ${(delayMs / 1_000).toFixed(2)} seconds`);
