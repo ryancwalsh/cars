@@ -35,6 +35,8 @@ export async function getLatestCarGurusListing(url: string): Promise<Partial<Scr
     const imageUrl = await page.evaluate((element) => element?.getAttribute('src'), elementHandle);
     console.log(`Found joint selector: ${jointSelector}`, elementHandle, imageUrl);
 
+    // TODO: Also looking for dealer URL.
+
     const result: Partial<ScrapedListing> | null = imageUrl ? { image_url: imageUrl } : null;
 
     console.log({ result });

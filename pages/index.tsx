@@ -37,13 +37,17 @@ export default function Index() {
                   <h2 className="text-lg font-bold mb-2">
                     {listing.year} {listing.make} {listing.model} {listing.trim}
                   </h2>
-                  <p className="text-gray-600">{listing.weightedRating}</p>
-                  <p className="text-gray-600" title={`price per remaining mile, expecting ${milesExpected} miles`}>
+                  <div className="text-gray-600 font-bold">{listing.weightedRating}</div>
+                  <div className="text-gray-600">
+                    {listing.kbb_consumer_rating}, {listing.kbb_expert_rating}, {listing.cars_dot_com_rating}, {listing.edmunds_rating},{' '}
+                    {listing.edmunds_repair_pal_reliability_rating}, {listing.safety_rating}
+                  </div>
+                  <div className="text-gray-600" title={`price per remaining mile, expecting ${milesExpected} miles`}>
                     {listing.pricePerRemainingMiles ? `$${listing.pricePerRemainingMiles.toFixed(2)} / rem mi` : ''}
-                  </p>
-                  <p className="text-gray-600">${listing.price_approx?.toLocaleString() ?? 'N/A'}</p>
-                  <p className="text-gray-600">{listing.mileage?.toLocaleString() ?? 'N/A'} miles</p>
-                  <p className="text-gray-600">{listing.location}</p>
+                  </div>
+                  <div className="text-gray-600 font-bold">${listing.price_approx?.toLocaleString() ?? 'N/A'}</div>
+                  <div className="text-gray-600">{listing.mileage?.toLocaleString() ?? 'N/A'} miles</div>
+                  <div className="text-gray-600">{listing.location}</div>
                 </div>
               </div>
             ))}
