@@ -43,11 +43,11 @@ function getListingsWithModelIds(listings: Array<ScrapedListing & { model_id: nu
   });
 }
 
-export async function addNewListings() {
+export async function addNewListings(pageNumber = 1) {
   // const listingsAsJsonString = demoScrapedListingsJsonString;
   // const listings = JSON.parse(listingsAsJsonString);
   // console.log({ listings, listingsAsJsonString });
-  const listings = await getLatestCarGurusListings();
+  const listings = await getLatestCarGurusListings(pageNumber);
 
   const models = getModelsFromListings(listings);
 

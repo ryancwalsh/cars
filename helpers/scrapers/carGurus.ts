@@ -10,7 +10,7 @@ import { getNumberWithinString } from '../generic/numbers';
 import { type ScrapedListing } from '../types';
 import { saveHtml } from './logging';
 
-const url = `https://www.cargurus.com/Cars/inventorylisting/viewDetailsFilterViewInventoryListing.action?sourceContext=untrackedWithinSite_false_0&distance=25&inventorySearchWidgetType=AUTO&zip=30009&maxAccidents=0&hideSalvage=true&hideFrameDamaged=true&transmissionTypes=AUTOMATIC&hideFleet=true&hideMultipleOwners=true&maxPrice=12000&daysOnMarketMax=7&startYear=2015&hideLemon=true&hideTheft=true&sortDir=ASC&sortType=BEST_MATCH&isDeliveryEnabled=true`; // #resultsPage=2
+const url = `https://www.cargurus.com/Cars/inventorylisting/viewDetailsFilterViewInventoryListing.action?sourceContext=untrackedWithinSite_false_0&distance=25&inventorySearchWidgetType=AUTO&zip=30009&maxAccidents=0&hideSalvage=true&hideFrameDamaged=true&transmissionTypes=AUTOMATIC&hideFleet=true&hideMultipleOwners=true&startYear=2015&hideLemon=true&hideTheft=true&sortDir=ASC&sortType=BEST_MATCH&isDeliveryEnabled=true&maxPrice=12000`;
 
 // const url = `https://www.example.com`;
 
@@ -142,17 +142,20 @@ function getElementFromHtml(html: string, selector: string): Element | null {
 }
 
 // eslint-disable-next-line max-lines-per-function
-export async function getLatestCarGurusListings(): Promise<ScrapedListing[]> {
+export async function getLatestCarGurusListings(pageNumber = 1): Promise<ScrapedListing[]> {
   const { browser, page } = await getChromium();
+  const paginatedUrl = `${url}${pageNumber === 1 ? '&daysOnMarketMax=7' : `&daysOnMarketMax=900#resultsPage=${pageNumber}`}`;
+  console.log({ paginatedUrl });
+
   try {
-    await page.goto(url, {
+    await page.goto(paginatedUrl, {
       waitUntil: 'networkidle0',
     });
-    console.log(`visited ${url}`);
+    console.log(`visited ${paginatedUrl}`);
 
     const now = new Date().toISOString();
 
-    await saveHtml(page, url, `carGurus_${now}`);
+    await saveHtml(page, paginatedUrl, `carGurus_${now}`);
 
     await page.screenshot({
       path: `${SCRAPE_LOGS_PATH}/carGurus_${now}.png`,

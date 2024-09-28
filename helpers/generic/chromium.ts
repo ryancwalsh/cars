@@ -1,4 +1,4 @@
-import { type Browser } from 'puppeteer';
+import { type Browser, type Page } from 'puppeteer';
 import puppeteer from 'puppeteer-extra';
 // add stealth plugin and use defaults (all evasion techniques)
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
@@ -24,7 +24,7 @@ export async function getChromium() {
   console.log({ options });
   const browser = await puppeteer.launch(options);
 
-  const page = await browser.newPage();
+  const page = await closeAllTabsExceptMostRecent(browser);
   // await closeAllTabsExceptMostRecent(browser);
   // const [page] = await browser.pages(); // https://stackoverflow.com/a/65514432/
   // https://www.zenrows.com/blog/puppeteer-avoid-detection#headers
@@ -47,11 +47,18 @@ export async function closeAllOpenTabs(browser: Browser) {
   // }
 }
 
-export async function closeAllTabsExceptMostRecent(browser: Browser) {
-  const pages = (await browser.pages()).slice(1);
-  console.log('closeAllTabsExceptMostRecent', { pages });
-  for (const page of pages) {
-    await page.close();
+export async function closeAllTabsExceptMostRecent(browser: Browser): Promise<Page> {
+  const pages = await browser.pages();
+  console.log('closeAllTabsExceptMostRecent. pages.length = ', pages.length);
+  if (pages.length === 0) {
+    return await browser.newPage();
+  } else {
+    const recentPage = pages.pop() as Page;
+    for (const page of pages) {
+      await page.close();
+    }
+
+    return recentPage;
   }
 }
 
