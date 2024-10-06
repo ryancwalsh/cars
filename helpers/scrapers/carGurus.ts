@@ -2,13 +2,13 @@
 // `clear && CHROME_PATH=/opt/brave.com/brave/brave SCRAPE_LOGS_PATH=/home/rcwalsh/code/cars/logs BROWSER_USER_DATA_DIRECTORY=/home/rcwalsh/.config/BraveSoftware/Brave-Browser/Default npx tsx helpers/scrapers/carGurus.ts`
 
 /* eslint-disable canonical/id-match */
-import { JSDOM } from 'jsdom';
 
 import { SCRAPE_LOGS_PATH } from '../config';
 import { getChromium } from '../generic/chromium';
 import { getNumberWithinString } from '../generic/numbers';
 import { type ScrapedListing } from '../types';
 import { saveHtml } from './logging';
+import { getElementFromHtml, getPriceFromText, removeSubstringAtEnd } from './scraping';
 
 const url = `https://www.cargurus.com/Cars/inventorylisting/viewDetailsFilterViewInventoryListing.action?sourceContext=untrackedWithinSite_false_0&distance=25&inventorySearchWidgetType=AUTO&zip=30009&maxAccidents=0&hideSalvage=true&hideFrameDamaged=true&transmissionTypes=AUTOMATIC&hideFleet=true&hideMultipleOwners=true&startYear=2015&hideLemon=true&hideTheft=true&sortDir=ASC&sortType=BEST_MATCH&isDeliveryEnabled=true&maxPrice=12000`;
 
@@ -16,21 +16,12 @@ const url = `https://www.cargurus.com/Cars/inventorylisting/viewDetailsFilterVie
 
 const listingTileClass = '.pazLTN'; // must match listingTileClassInner
 
-function removeSubstringAtEnd(string: string, substring: string) {
-  if (string.endsWith(substring)) {
-    return string.slice(0, -substring.length);
-  }
-
-  return string;
-}
-
 function cleanListing(listingElement: Element, listing: ScrapedListing): void {
   const title = listingElement.querySelector('h4')?.textContent?.trim() ?? '';
   const titleBeforeTrim = `${listing.year} ${listing.make} ${listing.model}`;
   listing.trim = title.replace(titleBeforeTrim, '').trim();
 
-  const priceText = listingElement.querySelector('[data-testid="srp-tile-price"]')?.textContent?.trim().replaceAll(/[$,]/gu, '');
-  listing.price_approx = priceText ? Number.parseFloat(priceText) : null;
+  listing.price_approx = getPriceFromText(listingElement.querySelector('[data-testid="srp-tile-price"]')?.textContent);
 
   listing.location = listingElement.querySelector('[data-testid="srp-tile-bucket-text"]')?.textContent?.trim() ?? null;
 
@@ -131,14 +122,6 @@ function extractCarListings(nodeListOfListingElements: Element[] | undefined): S
   }
 
   return cars;
-}
-
-function getElementFromHtml(html: string, selector: string): Element | null {
-  const dom = new JSDOM(html);
-
-  const element = dom.window.document.querySelector(selector);
-
-  return element;
 }
 
 // eslint-disable-next-line max-lines-per-function

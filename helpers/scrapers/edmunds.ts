@@ -28,6 +28,7 @@ export async function getEdmundsRatings(searchQuery: string, modelId: number) {
       timeout: 3_000, // max milliseconds to wait
     });
     if (mainElement) {
+      // TODO: See which of these can use `getValueFromSelector`.
       const consumeRatingElement = await mainElement.$('.consumer-reviews .average-user-rating');
       const consumerRatingTextContent = await consumeRatingElement?.getProperty('textContent');
       const consumerRatingText = await consumerRatingTextContent?.jsonValue();

@@ -10,6 +10,7 @@ import { supabaseClient } from '../supabase';
 /**
  * checks each "active" listing in the `queue` view to see if it's still available at CarGurus and updates the `listings` row to say when it was last checked (and update to inactive as necessary or update image)
  */
+// eslint-disable-next-line max-lines-per-function
 async function check() {
   const yesterday = dayjs().subtract(1, 'day').startOf('day').toISOString();
   const { data: rows } = await supabaseClient.from<'queue', Database['public']['Views']['queue']>('queue').select().lte('last_checked_at', yesterday);
@@ -32,6 +33,10 @@ async function check() {
         if (isActive) {
           // eslint-disable-next-line canonical/id-match
           payload.image_url = details.image_url;
+          // eslint-disable-next-line canonical/id-match
+          payload.price_approx = details.price_approx;
+          // eslint-disable-next-line canonical/id-match
+          payload.listing_url = details.listing_url;
         }
 
         console.log({ payload, vin });

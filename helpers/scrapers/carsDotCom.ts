@@ -39,6 +39,7 @@ export async function getCarsDotComRatings(searchQuery: string, modelId: number)
       });
       const childElement = await reviewsElement.$('[data-linkname="research-consumer-reviews-top"]');
 
+      // TODO: See which of these can use `getValueFromSelector`.
       const textContent = await childElement?.getProperty('textContent');
       const text = await textContent?.jsonValue();
 

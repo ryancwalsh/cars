@@ -37,6 +37,7 @@ export async function getKbbRatings(searchQuery: string, modelId: number) {
 
     const ratingsElements = await appElement?.$$('.css-1c7qqqr');
     if (ratingsElements) {
+      // TODO: See which of these can use `getValueFromSelector`.
       const expertRatingElementTextContent = await ratingsElements[0].getProperty('textContent');
       const expertRatingString = await expertRatingElementTextContent?.jsonValue();
       const consumerRatingElementTextContent = await ratingsElements[1].getProperty('textContent');

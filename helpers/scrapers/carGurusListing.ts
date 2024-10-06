@@ -4,11 +4,14 @@ import { SCRAPE_LOGS_PATH } from '../config';
 import { getChromium, sleep } from '../generic/chromium';
 import { type ScrapedListing } from '../types';
 import { getSafeString, saveHtml } from './logging';
+import { getPriceFromText, getValueFromSelector } from './scraping';
 
 // eslint-disable-next-line max-lines-per-function
 export async function getLatestCarGurusListing(url: string): Promise<Partial<ScrapedListing> | null> {
   const { browser, page } = await getChromium();
   try {
+    // const localTestFile =''
+    // await page.goto(`file://${localTestFile}`);
     await page.goto(url, {
       waitUntil: 'networkidle0',
     });
@@ -35,9 +38,20 @@ export async function getLatestCarGurusListing(url: string): Promise<Partial<Scr
     const imageUrl = await page.evaluate((element) => element?.getAttribute('src'), elementHandle);
     console.log(`Found joint selector: ${jointSelector}`, elementHandle, imageUrl);
 
-    // TODO: Also looking for dealer URL.
+    let result: Partial<ScrapedListing> | null = null;
+    if (imageUrl) {
+      const priceApproxString = await getValueFromSelector(page, 'aside[data-testid="vdpDesktopRightColumn"] div h2');
+      const priceApprox = getPriceFromText(priceApproxString);
 
-    const result: Partial<ScrapedListing> | null = imageUrl ? { image_url: imageUrl } : null;
+      const handle = await page.waitForSelector('a[aria-label="Dealer website"]'); // dealer URL
+      const hrefProperty = await handle?.getProperty('href');
+      const listingUrl = await hrefProperty?.jsonValue();
+      result = {
+        image_url: imageUrl,
+        listing_url: listingUrl,
+        price_approx: priceApprox,
+      };
+    }
 
     console.log({ result });
 
