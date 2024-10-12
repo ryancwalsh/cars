@@ -15,6 +15,12 @@ export async function getKbbRatings(searchQuery: string, modelId: number) {
   // const url = `https://duckduckgo.com/?q=%5C${encodeURIComponent(searchQuery)} !kbb`;
   const url = `https://duckduckgo.com/?q=%5C${encodeURIComponent(`${searchQuery} site:kbb.com !ducky`)}`;
   console.log({ url });
+  await upsertRatings([
+    {
+      kbb_url: url,
+      model_id: modelId,
+    },
+  ]);
   const { browser, page } = await getChromium();
 
   try {

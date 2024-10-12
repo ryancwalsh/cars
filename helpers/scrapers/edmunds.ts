@@ -14,6 +14,12 @@ export async function getEdmundsRatings(searchQuery: string, modelId: number) {
   // https://duckduckgo.com/bangs
   const url = `https://duckduckgo.com/?q=%5C${encodeURIComponent(`${searchQuery} ratings reviews site:edmunds.com !ducky`)}`;
   console.log({ url });
+  await upsertRatings([
+    {
+      edmunds_url: url,
+      model_id: modelId,
+    },
+  ]);
   const { browser, page } = await getChromium();
   try {
     await page.goto(url, {
