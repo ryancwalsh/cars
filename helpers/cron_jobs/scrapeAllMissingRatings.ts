@@ -3,14 +3,12 @@
 import { sleep } from '../generic/chromium';
 import { scrapeRatingsForNextListing } from '../scrapeRatingsForNextListing';
 
-// Utility function to generate a random delay between a given min and max (in milliseconds)
 function getRandomDelay(minSeconds: number, maxSeconds: number): number {
   const minMs = minSeconds * 1_000;
   const maxMs = maxSeconds * 1_000;
   return Math.floor(Math.random() * (maxMs - minMs + 1)) + minMs;
 }
 
-// Main function to manage the repeated calls
 async function executeWithRandomIntervals(): Promise<void> {
   const MIN_DELAY_SECONDS = 5;
   const MAX_DELAY_SECONDS = 10;
@@ -26,12 +24,10 @@ async function executeWithRandomIntervals(): Promise<void> {
       await sleep(delayMs);
     } catch (error) {
       console.error(`[${new Date().toISOString()}] Error in determineMissing:`, error);
-      // Decide on retry strategy or error handling as needed
     }
   }
 }
 
-// Kick off the process
 executeWithRandomIntervals().catch((error) => {
   console.error(`[${new Date().toISOString()}] Critical failure:`, error);
   // process.exit(1); // Optional: Exit the process if an unrecoverable error occurs
