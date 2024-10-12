@@ -80,22 +80,27 @@ function calculateWeightedScore(items: Array<{ value: number; weight: number }>)
 /**
  * Converts a `pricePerRemainingMiles` input (such as $0.10) to a 1-5 scale, where cheaper is better, so $0 would be a 5, and high values like $0.17 get a 1.
  * pricePerRemainingMiles tends to be $0.06 to $0.17 if milesExpected = 250k.
+ * TODO: Clamp so that $0.01 or $0.02 is a 5 since $0 is impossible.
+ * TODO: It's probably better to get rid of the PricePerRemainingMilesScore since price is a result of many more factors than just remnaining miles.  Maybe just have a RemainingMilesScore.
  */
-function getPricePerRemainingMilesScore(pricePerRemainingMiles: number, max = 0.17): number {
-  // Ensure input is non-negative and clamp values above 0.17
-  const clampedInput = Math.min(Math.max(pricePerRemainingMiles, 0), max);
+function getPricePerRemainingMilesScore(pricePerRemainingMiles: number | null, max = 0.17): number | null {
+  if (pricePerRemainingMiles) {
+    // Ensure input is non-negative and clamp values above 0.17
+    const clampedInput = Math.min(Math.max(pricePerRemainingMiles, 0), max);
 
-  // Map input from the range [0, 0.17] to [5, 1]
-  const score = 5 - (clampedInput / max) * 4;
+    // Map input from the range [0, 0.17] to [5, 1]
+    const score = 5 - (clampedInput / max) * 4;
 
-  const pprmScore = Number(score.toFixed(2));
+    const pprmScore = Number(score.toFixed(2));
 
-  return pprmScore;
+    return pprmScore;
+  } else {
+    return null;
+  }
 }
 
-function getScore(weightedRating: number | null, pricePerRemainingMiles: number | null): number | null {
-  if (pricePerRemainingMiles && weightedRating) {
-    const pprmScore = getPricePerRemainingMilesScore(pricePerRemainingMiles);
+function getScore(weightedRating: number | null, pprmScore: number | null): number | null {
+  if (pprmScore && weightedRating) {
     return Number(
       calculateWeightedScore([
         { value: pprmScore, weight: 0.1 },
@@ -112,10 +117,12 @@ export function getListingsWithWeightedRatings(listings: Array<Queue['Row']>) {
     .map((row) => {
       const weightedRating = calculateWeightedRating(row);
       const pricePerRemainingMiles = row.price_approx && row.mileage && row.mileage < milesExpected ? row.price_approx / (milesExpected - row.mileage) : null;
-      const score = getScore(weightedRating, pricePerRemainingMiles);
+      const pprmScore = getPricePerRemainingMilesScore(pricePerRemainingMiles);
+      const score = getScore(weightedRating, pprmScore);
 
       return {
         ...row,
+        pprmScore,
         pricePerRemainingMiles,
         score,
         weightedRating,
