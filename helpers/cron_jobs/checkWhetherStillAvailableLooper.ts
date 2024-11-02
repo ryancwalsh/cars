@@ -6,6 +6,7 @@ import { type Database } from '../../database.types';
 import { sleep } from '../generic/chromium';
 import { getLatestCarGurusListing } from '../scrapers/carGurusListing';
 import { supabaseClient } from '../supabase';
+import { getListingsWithWeightedRatings } from '../weightedRating';
 
 /**
  * checks each "active" listing in the `queue` view to see if it's still available at CarGurus and updates the `listings` row to say when it was last checked (and update to inactive as necessary or update image)
@@ -19,7 +20,11 @@ async function check() {
 
   if (rows) {
     let counter = 1;
-    for (const row of rows) {
+    const listings = getListingsWithWeightedRatings(rows);
+
+    // console.log({ listings }, listings.length);
+
+    for (const row of listings) {
       console.log({ row }, `${counter} of ${rows.length}`);
       if (row.found_at_url) {
         const vin = row.vin as string; // TODO: Why does it think `row.vin` could ever be null?

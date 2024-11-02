@@ -7,7 +7,6 @@ const defaultCount = 30;
 const reliabilityWeight = 100;
 const kbbExpertRatingWeight = 100;
 const safetyRatingWeight = 100;
-export const milesExpected = 300_000;
 
 function getCount(count: number | null | undefined): number {
   return count ?? defaultCount;
@@ -60,7 +59,10 @@ export function calculateWeightedRating(row: Queue['Row']): number | null {
   }
 }
 
-function calculateWeightedScore(items: Array<{ value: number; weight: number }>): number {
+/**
+ * Return the weighted average of values
+ */
+function calculateWeightedAverage(items: Array<{ value: number; weight: number }>, decimalPlaces = 2): number {
   let totalWeight = 0;
   let weightedSum = 0;
 
@@ -73,57 +75,46 @@ function calculateWeightedScore(items: Array<{ value: number; weight: number }>)
     throw new Error('Total weight cannot be zero.');
   }
 
-  // Return the weighted average score
-  return weightedSum / totalWeight;
+  return Number((weightedSum / totalWeight).toFixed(decimalPlaces));
 }
 
 /**
- * Converts a `pricePerRemainingMiles` input (such as $0.10) to a 1-5 scale, where cheaper is better, so $0 would be a 5, and high values like $0.17 get a 1.
- * pricePerRemainingMiles tends to be $0.06 to $0.17 if milesExpected = 250k.
- * TODO: Clamp so that $0.01 or $0.02 is a 5 since $0 is impossible.
- * TODO: It's probably better to get rid of the PricePerRemainingMilesScore since price is a result of many more factors than just remnaining miles.  Maybe just have a RemainingMilesScore.
+ * Maps the value to a 1-5 scale where 5 is best.
  */
-function getPricePerRemainingMilesScore(pricePerRemainingMiles: number | null, max = 0.17): number | null {
-  if (pricePerRemainingMiles) {
-    // Ensure input is non-negative and clamp values above 0.17
-    const clampedInput = Math.min(Math.max(pricePerRemainingMiles, 0), max);
-
-    // Map input from the range [0, 0.17] to [5, 1]
-    const score = 5 - (clampedInput / max) * 4;
-
-    const pprmScore = Number(score.toFixed(2));
-
-    return pprmScore;
-  } else {
-    return null;
-  }
+function getReverseRatingClamped(value: number, min: number, max: number, decimalPlaces = 2): number {
+  const clamped = Math.min(Math.max(value, min), max);
+  const normalized = (clamped - min) / (max - min);
+  return Number((5 - normalized * 4).toFixed(decimalPlaces));
 }
 
-function getScore(weightedRating: number | null, pprmScore: number | null): number | null {
-  if (pprmScore && weightedRating) {
-    return Number(
-      calculateWeightedScore([
-        { value: pprmScore, weight: 0.1 },
-        { value: weightedRating, weight: 0.9 },
-      ]).toFixed(2),
-    );
-  } else {
-    return null;
-  }
-}
-
+/**
+ * Very important! Weightings in this function will determine the sort order of the results!
+ */
 export function getListingsWithWeightedRatings(listings: Array<Queue['Row']>) {
   return listings
     .map((row) => {
       const weightedRating = calculateWeightedRating(row);
-      const pricePerRemainingMiles = row.price_approx && row.mileage && row.mileage < milesExpected ? row.price_approx / (milesExpected - row.mileage) : null;
-      const pprmScore = getPricePerRemainingMilesScore(pricePerRemainingMiles);
-      const score = getScore(weightedRating, pprmScore);
+      const mileageRating = row.mileage ? getReverseRatingClamped(row.mileage, 40_000, 300_000) : null;
+      const priceRating = row.price_approx ? getReverseRatingClamped(row.price_approx, 5_500, 12_000) : null;
+      const items = [];
+      if (weightedRating) {
+        items.push({ value: weightedRating, weight: 0.9 });
+      }
+
+      if (mileageRating) {
+        items.push({ value: mileageRating, weight: 0.05 });
+      }
+
+      if (priceRating) {
+        items.push({ value: priceRating, weight: 0.05 });
+      }
+
+      const score = calculateWeightedAverage(items);
 
       return {
         ...row,
-        pprmScore,
-        pricePerRemainingMiles,
+        mileageRating,
+        priceRating,
         score,
         weightedRating,
       };
