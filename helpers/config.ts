@@ -16,11 +16,11 @@ if (!process.env.NODE_ENV) {
 
 export const environment = cleanEnv(process.env, {
   BROWSER_USER_DATA_DIRECTORY: str({ default: undefined }),
-  CHROME_PATH: str(),
+  CHROME_PATH: str({ default: '' }),
   // https://github.com/Sparticuz/chromium/releases
   CHROMIUM_TAR: str({ default: 'https://github.com/Sparticuz/chromium/releases/download/v127.0.0/chromium-v127.0.0-pack.tar' }),
   IS_BROWSER_HEADLESS: bool({ default: false }),
-  SCRAPE_LOGS_PATH: str(),
+  SCRAPE_LOGS_PATH: str({ default: '' }),
   SUPABASE_ANON_KEY: str(),
   SUPABASE_URL: str(),
   // NODE_ENV: str({ choices: ['development', 'test', 'production', 'staging'] }),
