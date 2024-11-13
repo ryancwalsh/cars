@@ -2,7 +2,7 @@ import fs from 'node:fs';
 
 import { type Page } from 'puppeteer';
 
-import { SCRAPE_LOGS_PATH } from '../config';
+import { environment } from '../config';
 
 export function getSafeString(input: string): string {
   return input.replaceAll(/[^a-z\d]/giu, '_');
@@ -11,7 +11,7 @@ export function getSafeString(input: string): string {
 export async function saveHtml(page: Page, url: string, searchQuery?: string): Promise<string> {
   const currentUrl = page.url();
   console.log({ currentUrl });
-  if (SCRAPE_LOGS_PATH) {
+  if (environment.SCRAPE_LOGS_PATH) {
     // await page.screenshot({
     //   path: 'screenshot.png',
     // });
@@ -21,7 +21,7 @@ export async function saveHtml(page: Page, url: string, searchQuery?: string): P
     const safeFilename = `${getSafeString(currentUrl.slice(-maxLength)).toLowerCase()}${getSafeString(datetime)}`;
     const details = JSON.stringify({ currentUrl, datetime, searchQuery, url }, null, 2);
 
-    const filePath = `${SCRAPE_LOGS_PATH}/${safeFilename}.html`;
+    const filePath = `${environment.SCRAPE_LOGS_PATH}/${safeFilename}.html`;
     console.log({ filePath, maxLength });
 
     // Create the comment with details

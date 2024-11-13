@@ -1,6 +1,6 @@
 /* eslint-disable canonical/id-match */
 
-import { SCRAPE_LOGS_PATH } from '../config';
+import { environment } from '../config';
 import { getChromium, sleep } from '../generic/chromium';
 import { type ScrapedListing } from '../types';
 import { getSafeString, saveHtml } from './logging';
@@ -21,7 +21,7 @@ export async function getLatestCarGurusListing(url: string): Promise<Partial<Scr
 
     const now = new Date().toISOString();
     await page.screenshot({
-      path: `${SCRAPE_LOGS_PATH}/carGurus_${now}_${getSafeString(url)}.png`,
+      path: `${environment.SCRAPE_LOGS_PATH}/carGurus_${now}_${getSafeString(url)}.png`,
     });
 
     const mainPhotoSelector = '[alt="Vehicle Full Photo"]';

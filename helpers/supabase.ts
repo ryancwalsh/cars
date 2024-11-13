@@ -2,12 +2,10 @@ import { createClient } from '@supabase/supabase-js';
 import uniqBy from 'lodash/uniqBy';
 
 import { type Database } from '../database.types';
-import { SUPABASE_ANON_KEY, SUPABASE_URL } from './config';
+import { environment } from './config';
 import { type TableRows } from './types';
 
-console.log('supabase helper', { SUPABASE_URL });
-
-export const supabaseClient = createClient<Database>(SUPABASE_URL, SUPABASE_ANON_KEY);
+export const supabaseClient = createClient<Database>(environment.SUPABASE_URL, environment.SUPABASE_ANON_KEY);
 
 /**
  * https://supabase.com/docs/reference/javascript/upsert

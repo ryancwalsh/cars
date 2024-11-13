@@ -3,7 +3,7 @@ import puppeteer from 'puppeteer-extra';
 // add stealth plugin and use defaults (all evasion techniques)
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 
-import { BROWSER_USER_DATA_DIRECTORY, CHROME_PATH, IS_BROWSER_HEADLESS } from '../config';
+import { environment } from '../config';
 
 puppeteer.use(StealthPlugin());
 
@@ -17,9 +17,9 @@ export async function getChromium() {
       width: 1_920,
     },
     dumpio: true,
-    executablePath: CHROME_PATH, // ?? (await chromium.executablePath(CHROMIUM_TAR)), // https://github.com/Sparticuz/chromium/releases
-    headless: IS_BROWSER_HEADLESS, // chromium.headless,
-    userDataDir: BROWSER_USER_DATA_DIRECTORY,
+    executablePath: environment.CHROME_PATH, // ?? (await chromium.executablePath(environment.CHROMIUM_TAR)), // https://github.com/Sparticuz/chromium/releases
+    headless: environment.IS_BROWSER_HEADLESS, // chromium.headless,
+    userDataDir: environment.BROWSER_USER_DATA_DIRECTORY,
   };
   console.log({ options });
   const browser = await puppeteer.launch(options);
@@ -39,6 +39,7 @@ export async function getChromium() {
   return { browser, page };
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function closeAllOpenTabs(browser: Browser) {
   // const pages = await browser.pages();
   // console.log('closeAllOpenTabs', pages.length);

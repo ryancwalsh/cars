@@ -3,7 +3,7 @@
 
 /* eslint-disable canonical/id-match */
 
-import { SCRAPE_LOGS_PATH } from '../config';
+import { environment } from '../config';
 import { getChromium } from '../generic/chromium';
 import { getNumberWithinString } from '../generic/numbers';
 import { type ScrapedListing } from '../types';
@@ -127,7 +127,7 @@ function extractCarListings(nodeListOfListingElements: Element[] | undefined): S
 // eslint-disable-next-line max-lines-per-function
 export async function getLatestCarGurusListings(pageNumber = 1): Promise<ScrapedListing[]> {
   const { browser, page } = await getChromium();
-  const paginatedUrl = `${url}${pageNumber === 1 ? '&daysOnMarketMax=7' : `&daysOnMarketMax=900#resultsPage=${pageNumber}`}`;
+  const paginatedUrl = `${url}&daysOnMarketMax=900${pageNumber === 1 ? '' : `#resultsPage=${pageNumber}`}`;
   console.log({ paginatedUrl });
 
   try {
@@ -141,7 +141,7 @@ export async function getLatestCarGurusListings(pageNumber = 1): Promise<Scraped
     await saveHtml(page, paginatedUrl, `carGurus_${now}`);
 
     await page.screenshot({
-      path: `${SCRAPE_LOGS_PATH}/carGurus_${now}.png`,
+      path: `${environment.SCRAPE_LOGS_PATH}/carGurus_${now}.png`,
     });
 
     // const localTestFile =''
