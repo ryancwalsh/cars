@@ -1,7 +1,10 @@
+import { type PostgrestError } from '@supabase/supabase-js';
+
 import { closeAllOpenTabs, getChromium } from '../generic/chromium';
 import { getNumberWithinString } from '../generic/numbers';
 import { upsertRatings } from '../supabase';
 import { saveHtml } from './logging';
+import { getValueFromSelector } from './scraping';
 
 /**
  * Use DuckDuckGo to find KBB URL, then visit KBB, and wait for reviews element
@@ -9,7 +12,19 @@ import { saveHtml } from './logging';
  * https://github.com/Sparticuz/chromium/blob/master/examples/remote-min-binary/index.js
  */
 // eslint-disable-next-line max-lines-per-function
-export async function getKbbRatings(searchQuery: string, modelId: number) {
+export async function getKbbRatings(
+  searchQuery: string,
+  modelId: number,
+): Promise<{
+  matchingRecords: Array<{
+    kbb_consumer_rating: number | null;
+    kbb_consumer_ratings_count: number | null;
+    kbb_expert_rating: number | null;
+    kbb_url: string | null;
+    model_id: number;
+  }> | null;
+  upsertError: PostgrestError | null;
+} | null> {
   // https://superuser.com/questions/1496083/google-feeling-lucky-url-causing-redirect-notice/1496084#comment2934824_1496084
   // https://duckduckgo.com/bangs?q=kbb
   // const url = `https://duckduckgo.com/?q=%5C${encodeURIComponent(searchQuery)} !kbb`;
@@ -37,13 +52,10 @@ export async function getKbbRatings(searchQuery: string, modelId: number) {
       timeout: 3_000, // max milliseconds to wait
     });
 
-    const consumerReviewElement = await appElement?.$('#consumerreview .css-1sx61am.e1uau9z01');
-    const consumerRatingsCountDescriptionTextContent = await consumerReviewElement?.getProperty('textContent');
-    const consumerRatingsCountDescription = await consumerRatingsCountDescriptionTextContent?.jsonValue();
+    const consumerRatingsCountDescription = await getValueFromSelector(page, '#consumerreview .css-1sx61am.e1uau9z01');
 
     const ratingsElements = await appElement?.$$('.css-1c7qqqr');
     if (ratingsElements) {
-      // TODO: See which of these can use `getValueFromSelector`.
       const expertRatingElementTextContent = await ratingsElements[0].getProperty('textContent');
       const expertRatingString = await expertRatingElementTextContent?.jsonValue();
       const consumerRatingElementTextContent = await ratingsElements[1].getProperty('textContent');
