@@ -3,13 +3,29 @@
  * https://github.com/Sparticuz/chromium/blob/master/examples/remote-min-binary/index.js
  */
 
+import { type PostgrestError } from '@supabase/supabase-js';
+
 import { closeAllOpenTabs, getChromium } from '../generic/chromium';
 import { getNumberWithinString } from '../generic/numbers';
 import { upsertRatings } from '../supabase';
 import { saveHtml } from './logging';
+import { getValueFromSelector } from './scraping';
 
 // eslint-disable-next-line max-lines-per-function
-export async function getEdmundsRatings(searchQuery: string, modelId: number) {
+export async function getEdmundsRatings(
+  searchQuery: string,
+  modelId: number,
+): Promise<{
+  matchingRecords: Array<{
+    edmunds_monthly_cost_to_drive_estimate: number | null;
+    edmunds_rating: number | null;
+    edmunds_ratings_count: number | null;
+    edmunds_repair_pal_reliability_rating: number | null;
+    edmunds_url: string | null;
+    model_id: number;
+  }> | null;
+  upsertError: PostgrestError | null;
+} | null> {
   // https://superuser.com/questions/1496083/google-feeling-lucky-url-causing-redirect-notice/1496084#comment2934824_1496084
   // https://duckduckgo.com/bangs
   const url = `https://duckduckgo.com/?q=%5C${encodeURIComponent(`${searchQuery} ratings reviews site:edmunds.com !ducky`)}`;
@@ -34,21 +50,10 @@ export async function getEdmundsRatings(searchQuery: string, modelId: number) {
       timeout: 3_000, // max milliseconds to wait
     });
     if (mainElement) {
-      // TODO: See which of these can use `getValueFromSelector`.
-      const consumeRatingElement = await mainElement.$('.consumer-reviews .average-user-rating');
-      const consumerRatingTextContent = await consumeRatingElement?.getProperty('textContent');
-      const consumerRatingText = await consumerRatingTextContent?.jsonValue();
-      const reviewCountElement = await mainElement.$('.consumer-reviews .review-count');
-      const reviewCountTextContent = await reviewCountElement?.getProperty('textContent');
-      const reviewCountText = await reviewCountTextContent?.jsonValue();
-
-      const costToDriveElement = await mainElement.$('[data-tracking-id="view_cost_to_drive"]');
-      const costToDriveTextContent = await costToDriveElement?.getProperty('textContent');
-      const costToDriveText = await costToDriveTextContent?.jsonValue();
-
-      const reliabilityRatingElement = await mainElement.$('#subnav-reliability .rating-number');
-      const reliabilityRatingTextContent = await reliabilityRatingElement?.getProperty('textContent');
-      const reliabilityRatingText = await reliabilityRatingTextContent?.jsonValue();
+      const consumerRatingText = await getValueFromSelector(page, '.consumer-reviews .average-user-rating');
+      const reviewCountText = await getValueFromSelector(page, '.consumer-reviews .review-count');
+      const costToDriveText = await getValueFromSelector(page, '[data-tracking-id="view_cost_to_drive"]');
+      const reliabilityRatingText = await getValueFromSelector(page, '#subnav-reliability .rating-number');
 
       const payload = {
         edmunds_monthly_cost_to_drive_estimate: getNumberWithinString(costToDriveText),

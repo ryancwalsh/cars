@@ -27,7 +27,7 @@ async function check() {
     for (const row of listings) {
       console.log({ row }, `${counter} of ${rows.length}`);
       if (row.found_at_url) {
-        const vin = row.vin as string; // TODO: Why does it think `row.vin` could ever be null?
+        const vin = row.vin as string;
         const details = await getLatestCarGurusListing(row.found_at_url);
         // See if it's still available at CarGurus:
         const isActive = details !== null;
