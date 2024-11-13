@@ -2,7 +2,7 @@
 import { JSDOM } from 'jsdom';
 import { type Page } from 'puppeteer';
 
-export async function getValueFromSelector(page: Page, selector: string) {
+export async function getValueFromSelector(page: Page, selector: string): Promise<string | null | undefined> {
   const handle = await page.waitForSelector(selector);
   const textContent = await handle?.getProperty('textContent');
   const jsonValue = await textContent?.jsonValue();

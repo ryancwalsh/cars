@@ -3,13 +3,27 @@
  * https://github.com/Sparticuz/chromium/blob/master/examples/remote-min-binary/index.js
  */
 
+import { type PostgrestError } from '@supabase/supabase-js';
+
 import { closeAllOpenTabs, getChromium } from '../generic/chromium';
 import { getNumberWithinString } from '../generic/numbers';
 import { upsertRatings } from '../supabase';
 import { saveHtml } from './logging';
+import { getValueFromSelector } from './scraping';
 
 // eslint-disable-next-line max-lines-per-function
-export async function getCarsDotComRatings(searchQuery: string, modelId: number) {
+export async function getCarsDotComRatings(
+  searchQuery: string,
+  modelId: number,
+): Promise<{
+  matchingRecords: Array<{
+    cars_dot_com_rating: number | null;
+    cars_dot_com_ratings_count: number | null;
+    cars_dot_com_url: string | null;
+    model_id: number;
+  }> | null;
+  upsertError: PostgrestError | null;
+} | null> {
   // https://superuser.com/questions/1496083/google-feeling-lucky-url-causing-redirect-notice/1496084#comment2934824_1496084
   // https://duckduckgo.com/bangs
   const url = `https://duckduckgo.com/?q=${encodeURIComponent(`${searchQuery} ratings consumer reviews site:cars.com !ducky`)}`;
@@ -37,19 +51,16 @@ export async function getCarsDotComRatings(searchQuery: string, modelId: number)
       const ratingString = await reviewsElement.evaluate((element) => {
         return element.getAttribute('rating');
       });
-      const childElement = await reviewsElement.$('[data-linkname="research-consumer-reviews-top"]');
 
-      // TODO: See which of these can use `getValueFromSelector`.
-      const textContent = await childElement?.getProperty('textContent');
-      const text = await textContent?.jsonValue();
+      const ratingsCountText = await getValueFromSelector(page, '[data-linkname="research-consumer-reviews-top"]');
 
       const payload = {
         cars_dot_com_rating: Number(ratingString),
-        cars_dot_com_ratings_count: getNumberWithinString(text),
+        cars_dot_com_ratings_count: getNumberWithinString(ratingsCountText),
         cars_dot_com_url: currentUrl,
         model_id: modelId,
       };
-      console.log({ payload, ratingString, text, textContent });
+      console.log({ payload, ratingsCountText, ratingString });
       const result = await upsertRatings([payload]);
 
       return result;
