@@ -1,7 +1,26 @@
 import { type Database } from '../database.types';
-import { fetchRatings } from '../pages/api/ratings/fetch';
 import { Sites } from './enums';
+import { getCarsDotComRatings } from './scrapers/carsDotCom';
+import { getEdmundsRatings } from './scrapers/edmunds';
+import { getKbbRatings } from './scrapers/kbb';
 import { supabaseClient } from './supabase';
+
+type FetchedRatingsT = Awaited<ReturnType<typeof getKbbRatings>> | Awaited<ReturnType<typeof getEdmundsRatings>> | Awaited<ReturnType<typeof getCarsDotComRatings>> | null;
+
+export async function fetchRatings(site: string, searchQuery: string, modelId: number): Promise<FetchedRatingsT> {
+  console.log({ searchQuery, site });
+  let result: FetchedRatingsT;
+  if (site === Sites.KBB) {
+    result = await getKbbRatings(searchQuery, modelId);
+  } else if (site === Sites.EDMUNDS) {
+    result = await getEdmundsRatings(searchQuery, modelId);
+  } else {
+    result = await getCarsDotComRatings(searchQuery, modelId);
+  }
+
+  console.log({ result });
+  return result;
+}
 
 function getQueryParameters(row: Database['public']['Views']['missing_ratings']['Row']) {
   let site;
