@@ -87,10 +87,17 @@ function getReverseRatingClamped(value: number, min: number, max: number, decima
   return Number((5 - normalized * 4).toFixed(decimalPlaces));
 }
 
+export type ListingWithWeightedRatings = Queue['Row'] & {
+  mileageRating: number | null;
+  priceRating: number | null;
+  score: number | null;
+  weightedRating: number | null;
+};
+
 /**
  * Very important! Weightings in this function will determine the sort order of the results!
  */
-export function getListingsWithWeightedRatings(listings: Array<Queue['Row']>) {
+export function getListingsWithWeightedRatings(listings: Array<Queue['Row']>): ListingWithWeightedRatings[] {
   return listings
     .map((row) => {
       const weightedRating = calculateWeightedRating(row);
