@@ -9,7 +9,7 @@ module.exports = {
   },
   reactStrictMode: true,
   typescript: {
-    ignoreBuildErrors: true, // TODO: Clean up all errors; then remove this.
+    // ignoreBuildErrors: true,
   },
   webpack: (config) => {
     config.module.rules.push({

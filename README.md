@@ -6,6 +6,12 @@ To buy a car that fits my needs.
 
 To show an updated list of nearby used car listings filtered by my requirements and sorted descending by a weighted score (determined by various factors such as 3rd party ratings).
 
+# Keep in mind
+
+- How I work on a 1-person project in a personal repo differs from how I work on a team
+  - e.g. the commit messages and comments I write, the trade-offs I make and shortcuts I take (such as not using database migrations), the barebones UX, etc.
+- TODO
+
 # Architecture / Design
 
 TODO

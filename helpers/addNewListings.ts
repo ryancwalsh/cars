@@ -15,31 +15,44 @@ function getLowercaseHash(listing: ScrapedListing): string {
   return `${listing.year}_${listing.make}_${listing.model}_${listing.trim}`.toLowerCase();
 }
 
-function getModelsFromListings(listings: ScrapedListing[]): ModelInsertT[] {
-  return listings.map((listing) => {
-    const modelToInsert: ModelInsertT = {
-      lowercase_hash: getLowercaseHash(listing),
-      make: listing.make,
-      model: listing.model,
-      trim: listing.trim,
-      year: listing.year,
-    };
+function getUniqueModelsFromListings(listings: ScrapedListing[]): ModelInsertT[] {
+  const uniqueHashes = new Set<string>();
+  const uniqueModels: ModelInsertT[] = [];
 
-    return modelToInsert;
-  });
+  for (const listing of listings) {
+    const lowercaseHash = getLowercaseHash(listing);
+
+    if (!uniqueHashes.has(lowercaseHash)) {
+      uniqueHashes.add(lowercaseHash);
+
+      uniqueModels.push({
+        lowercase_hash: lowercaseHash,
+        make: listing.make,
+        model: listing.model,
+        trim: listing.trim,
+        year: listing.year,
+      });
+    }
+  }
+
+  return uniqueModels;
 }
 
-function getListingsWithModelIds(listings: Array<ScrapedListing & { model_id: number }>, modelIdsMap: ModelIdsMap): TableRows<'listings'> {
+/**
+ * To be able to upsert a listing, we need to have first upserted model data in order to get the model_id for that particular lowercase_hash of the model data.
+ * This function then looks up the model_id from modelIdsMap and attaches that model_id to the listing data (in preparation to upsert it).
+ */
+function getListingsWithModelIds(listings: ScrapedListing[], modelIdsMap: ModelIdsMap): TableRows<'listings'> {
   return listings.map((listing) => {
     const lowercaseHash = getLowercaseHash(listing);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { make, model, year, trim, ...rest } = listing;
-    const modelToInsert: ModelInsertT = {
-      model_id: modelIdsMap[lowercaseHash],
+    const freshListing: TableRows<'listings'>[0] = {
       ...rest,
+      model_id: modelIdsMap[lowercaseHash],
     };
 
-    return modelToInsert;
+    return freshListing;
   });
 }
 
@@ -49,18 +62,17 @@ export async function addNewListings(pageNumber = 1) {
   // console.log({ listings, listingsAsJsonString });
   const listings = await getLatestCarGurusListings(pageNumber);
 
-  const models = getModelsFromListings(listings);
+  const models = getUniqueModelsFromListings(listings);
 
   // console.log({ models });
 
-  // TODO: Figure out why the type of `modelsResult` is `{    matchingRecords: GenericStringError[] | null;    upsertError: PostgrestError | null;}`
   const modelsResult = await upsertModels(models);
   // console.log(JSON.stringify({ modelsResult }, null, 2));
 
   const modelIdsMap: ModelIdsMap = {};
   if (modelsResult.matchingRecords) {
-    for (const match of modelsResult.matchingRecords) {
-      modelIdsMap[match.lowercase_hash] = match.id;
+    for (const modelRecord of modelsResult.matchingRecords) {
+      modelIdsMap[modelRecord.lowercase_hash] = modelRecord.id;
     }
   }
 
@@ -72,7 +84,10 @@ export async function addNewListings(pageNumber = 1) {
     console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`');
   }
 
-  const listingsToInsert = getListingsWithModelIds(listings, modelIdsMap).filter((listing) => listing.vin !== null);
+  const listingsToInsert = getListingsWithModelIds(
+    listings.filter((listing) => listing.vin !== null),
+    modelIdsMap,
+  );
   console.log('listingsToInsert.length', listingsToInsert.length);
 
   await upsertListings(listingsToInsert);

@@ -12,12 +12,13 @@ import { Sites } from '../../../helpers/enums';
 import { getCarsDotComRatings } from '../../../helpers/scrapers/carsDotCom';
 import { getEdmundsRatings } from '../../../helpers/scrapers/edmunds';
 import { getKbbRatings } from '../../../helpers/scrapers/kbb';
-import { type upsertRatings } from '../../../helpers/supabase';
 
-export async function fetchRatings(site: string, searchQuery: string, modelId: number) {
+type FetchedRatingsT = Awaited<ReturnType<typeof getKbbRatings>> | Awaited<ReturnType<typeof getEdmundsRatings>> | Awaited<ReturnType<typeof getCarsDotComRatings>> | null;
+
+export async function fetchRatings(site: string, searchQuery: string, modelId: number): Promise<FetchedRatingsT> {
   console.log({ searchQuery, site });
 
-  let result: null | Awaited<ReturnType<typeof upsertRatings>>;
+  let result: FetchedRatingsT;
   if (site === Sites.KBB) {
     result = await getKbbRatings(searchQuery, modelId);
   } else if (site === Sites.EDMUNDS) {

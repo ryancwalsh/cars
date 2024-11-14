@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient, type PostgrestError } from '@supabase/supabase-js';
 import uniqBy from 'lodash/uniqBy';
 
 import { type Database } from '../database.types';
@@ -10,22 +10,24 @@ export const supabaseClient = createClient<Database>(environment.SUPABASE_URL, e
 /**
  * https://supabase.com/docs/reference/javascript/upsert
  */
-export async function upsertModels(records: TableRows<'models'>) {
-  const uniqueRecords = uniqBy(records, (item) => item.lowercase_hash);
-  // console.log({ uniqueRecords });
+export async function upsertModels(records: TableRows<'models'>): Promise<{
+  matchingRecords: Array<Database['public']['Tables']['models']['Row']> | null;
+  upsertError: PostgrestError | null;
+}> {
+  // console.log({ records });
   const onConflict = 'lowercase_hash';
   console.log({ onConflict });
-  const { data: upsertData, error: upsertError } = await supabaseClient.from<'models', Database['public']['Tables']['models']>('models').upsert(uniqueRecords, {
+  const { data: upsertData, error: upsertError } = await supabaseClient.from<'models', Database['public']['Tables']['models']>('models').upsert(records, {
     ignoreDuplicates: true, // If true, duplicate rows are ignored. If false, duplicate rows are merged with existing rows.
     onConflict, // Comma-separated UNIQUE column(s) to specify how duplicate rows are determined. Two rows are duplicates if all the onConflict columns are equal.
   });
 
   const { data: matchingRecords, error: selectError } = await supabaseClient
     .from<'models', Database['public']['Tables']['models']>('models')
-    .select(['id', 'lowercase_hash'].join(','))
+    .select()
     .in(
       'lowercase_hash',
-      uniqueRecords.map((record) => record.lowercase_hash),
+      records.map((record) => record.lowercase_hash),
     );
 
   console.log({ matchingRecords, selectError, upsertData, upsertError });
