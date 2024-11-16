@@ -59,7 +59,7 @@ export async function getEdmundsRatings(
         edmunds_monthly_cost_to_drive_estimate: getNumberWithinString(costToDriveText),
         edmunds_rating: getNumberWithinString(consumerRatingText),
         edmunds_ratings_count: getNumberWithinString(reviewCountText),
-        edmunds_repair_pal_reliability_rating: Number(reliabilityRatingText),
+        edmunds_repair_pal_reliability_rating: reliabilityRatingText ? Number(reliabilityRatingText) : undefined,
         edmunds_url: currentUrl,
         model_id: modelId,
       };

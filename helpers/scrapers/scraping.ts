@@ -3,10 +3,15 @@ import { JSDOM } from 'jsdom';
 import { type Page } from 'puppeteer';
 
 export async function getValueFromSelector(page: Page, selector: string): Promise<string | null | undefined> {
-  const handle = await page.waitForSelector(selector);
-  const textContent = await handle?.getProperty('textContent');
-  const jsonValue = await textContent?.jsonValue();
-  return jsonValue;
+  try {
+    const handle = await page.waitForSelector(selector);
+    const textContent = await handle?.getProperty('textContent');
+    const jsonValue = await textContent?.jsonValue();
+    return jsonValue;
+  } catch (error) {
+    console.error('Error finding the selector:', selector, error);
+    return undefined;
+  }
 }
 
 export function removeSubstringAtEnd(string: string, substring: string) {
