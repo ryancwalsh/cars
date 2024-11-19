@@ -75,7 +75,6 @@ yarn dev
 # TODO
 
 1. make the frontend interactive
-   - allow changing the weights of the scoring algorithm
    - allow adding new exclusions
    - allow discarding a listing (setting to inactive)
 1. add Autotrader ratings?

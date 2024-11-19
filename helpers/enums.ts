@@ -3,3 +3,7 @@ export enum Sites {
   EDMUNDS = 'edmunds',
   KBB = 'kbb',
 }
+
+export enum LocalStorageKey {
+  WEIGHTS = 'weights',
+}
