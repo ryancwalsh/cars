@@ -2,6 +2,7 @@
 
 import dayjs from 'dayjs';
 
+import { defaultWeights } from '../../components/WeightsInputs';
 import { type Database } from '../../database.types';
 import { sleep } from '../generic/chromium';
 import { getLatestCarGurusListing } from '../scrapers/carGurusListing';
@@ -20,7 +21,7 @@ async function check() {
 
   if (rows) {
     let counter = 1;
-    const listings = getListingsWithWeightedRatings(rows);
+    const listings = getListingsWithWeightedRatings(rows, defaultWeights);
 
     // console.log({ listings }, listings.length);
 
