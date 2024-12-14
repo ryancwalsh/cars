@@ -15,8 +15,14 @@ import { getListingsWithWeightedRatings } from '../weightedRating';
 // eslint-disable-next-line max-lines-per-function
 async function check() {
   const yesterday = dayjs().subtract(1, 'day').startOf('day').toISOString();
-  const { data: rows } = await supabaseClient.from<'queue', Database['public']['Views']['queue']>('queue').select().lte('last_checked_at', yesterday);
-
+  const { data: rows } = await supabaseClient
+    .from<'queue', Database['public']['Views']['queue']>('queue')
+    .select()
+    //   .eq(
+    //     'image_url',
+    //     'https://static-assets.cargurus.com/images/site-cars/no-image-placeholder_c80f77463a1c0559e4735b57ed1d96ec8ff77ec6bce5b247bb733c96e18316b7.svg_09568b15a17955ae746cd5eecca394230418525f04876ca54ce21146bea353e9.svg',
+    // )
+    .lte('last_checked_at', yesterday);
   console.log({ rows }, rows?.length);
 
   if (rows) {
