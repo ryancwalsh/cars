@@ -10,11 +10,20 @@ import { type ScrapedListing } from '../types';
 import { saveHtml } from './logging';
 import { getElementFromHtml, getPriceFromText, removeSubstringAtEnd } from './scraping';
 
-const url = `https://www.cargurus.com/Cars/inventorylisting/viewDetailsFilterViewInventoryListing.action?sourceContext=untrackedWithinSite_false_0
+const url = `https://www.cargurus.com/Cars/inventorylisting/viewDetailsFilterViewInventoryListing.action?
+sourceContext=untrackedWithinSite_false_0
 &distance=25
 &zip=30009
 &isDeliveryEnabled=false
-&maxAccidents=0&hideSalvage=true&hideFrameDamaged=true&transmissionTypes=AUTOMATIC&hideFleet=true&inventorySearchWidgetType=AUTO&hideMultipleOwners=true&hideLemon=true&hideTheft=true
+&maxAccidents=0
+&hideSalvage=true
+&hideFrameDamaged=true
+&transmissionTypes=AUTOMATIC
+&hideFleet=true
+&inventorySearchWidgetType=AUTO
+&hideMultipleOwners=true
+&hideLemon=true
+&hideTheft=true
 &startYear=2018
 &minPrice=11000
 &maxPrice=15000
