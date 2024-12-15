@@ -19,8 +19,29 @@ export function ListingCard({ listing }: { readonly listing: ListingWithWeighted
           {listing.weightedRating?.toFixed(1)}:
         </div>
         <div className="text-gray-600 pl-6" title="individual ratings">
-          {listing.kbb_consumer_rating}, {listing.kbb_expert_rating}, {listing.cars_dot_com_rating}, {listing.edmunds_rating}, {listing.edmunds_repair_pal_reliability_rating},{' '}
-          {listing.safety_rating}
+          <span className="border border-[transparent] hover:border-black" title="kbb_consumer_rating">
+            {listing.kbb_consumer_rating ?? '__'}
+          </span>
+          ,{' '}
+          <span className="border border-[transparent] hover:border-black" title="kbb_expert_rating">
+            {listing.kbb_expert_rating ?? '__'}
+          </span>
+          ,
+          <span className="border border-[transparent] hover:border-black" title="cars_dot_com_rating">
+            {listing.cars_dot_com_rating ?? '__'}
+          </span>
+          ,
+          <span className="border border-[transparent] hover:border-black" title="edmunds_rating">
+            {listing.edmunds_rating ?? '__'}
+          </span>
+          ,
+          <span className="border border-[transparent] hover:border-black" title="edmunds_repair_pal_reliability_rating">
+            {listing.edmunds_repair_pal_reliability_rating ?? '__'}
+          </span>
+          ,
+          <span className="border border-[transparent] hover:border-black" title="safety_rating">
+            {listing.safety_rating ?? '__'}
+          </span>
         </div>
         {/* <div className="text-gray-600 pl-3" title={`price per remaining mile, expecting ${milesExpected} miles`}>
                     {listing.pricePerRemainingMiles ? `$${listing.pricePerRemainingMiles.toFixed(2)} / rem mi` : ''}
