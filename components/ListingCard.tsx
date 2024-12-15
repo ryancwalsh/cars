@@ -25,13 +25,16 @@ export function ListingCard({ listing }: { readonly listing: ListingWithWeighted
         {/* <div className="text-gray-600 pl-3" title={`price per remaining mile, expecting ${milesExpected} miles`}>
                     {listing.pricePerRemainingMiles ? `$${listing.pricePerRemainingMiles.toFixed(2)} / rem mi` : ''}
                   </div> */}
-        <div className="text-gray-600 font-bold pl-3" title={`price rating: ${listing.priceRating}`}>
-          ${listing.price_approx?.toLocaleString() ?? 'N/A'}
-        </div>
-        <div className="text-gray-600 pl-3" title={`mileage rating: ${listing.mileageRating}`}>
-          {listing.mileage?.toLocaleString() ?? 'N/A'} miles
+        <div className="flex items-end justify-between">
+          <div className="text-gray-600 font-bold pl-3" title={`price rating: ${listing.priceRating}`}>
+            ${listing.price_approx?.toLocaleString() ?? 'N/A'}
+          </div>
+          <div className="text-gray-600 pl-3 self-end" title={`mileage rating: ${listing.mileageRating}`}>
+            {listing.mileage?.toLocaleString() ?? 'N/A'} miles
+          </div>
         </div>
         <div className="text-gray-600">{listing.location}</div>
+        <div className="text-gray-600 text-[9px] mt-2">{listing.vin}</div>
       </div>
     </div>
   );
