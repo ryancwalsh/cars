@@ -4,7 +4,9 @@ import { type Page } from 'puppeteer';
 
 export async function getValueFromSelector(page: Page, selector: string): Promise<string | null | undefined> {
   try {
-    const handle = await page.waitForSelector(selector);
+    const handle = await page.waitForSelector(selector, {
+      timeout: 5_000, // max milliseconds to wait
+    });
     const textContent = await handle?.getProperty('textContent');
     const jsonValue = await textContent?.jsonValue();
     return jsonValue;
