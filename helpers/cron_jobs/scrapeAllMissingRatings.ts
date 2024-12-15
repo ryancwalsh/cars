@@ -11,7 +11,7 @@ function getRandomDelay(minSeconds: number, maxSeconds: number): number {
 
 async function executeWithRandomIntervals(): Promise<void> {
   const MIN_DELAY_SECONDS = 5;
-  const MAX_DELAY_SECONDS = 10;
+  const MAX_DELAY_SECONDS = 7;
   const SLOW_DELAY_MS = 1_000 * 60 * 60 * 2; // 2 hr
 
   while (true) {
